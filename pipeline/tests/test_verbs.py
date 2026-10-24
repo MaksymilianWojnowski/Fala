@@ -43,3 +43,34 @@ def test_compound_with_two_participles():
 
 def test_unknown_word_is_predicted():
     assert conjugate('lugar')['predicted'] is True
+
+
+def test_normalize_br_substitutions():
+    assert normalize_br('pres', 'nos', 'imos') == 'vamos'
+    assert normalize_br('pres', 'eles', 'vêem') == 'veem'
+    assert normalize_br('subj_pres', 'eles', 'dêem') == 'deem'
+    assert normalize_br('subj_pres', 'eu', 'averigúe') == 'averigue'
+    assert normalize_br('pres', 'ele', 'pára') == 'para'
+    assert normalize_br('pres', 'eu', 'apóio') == 'apoio'
+
+
+def test_br_spelling_in_tables():
+    assert conjugate('ver')['forms']['pres']['eles'] == 'veem'
+    assert conjugate('dar')['forms']['subj_pres']['eles'] == 'deem'
+    assert conjugate('averiguar')['forms']['subj_pres']['eu'] == 'averigue'
+    assert conjugate('parar')['forms']['pres']['ele'] == 'para'
+    assert conjugate('apoiar')['forms']['pres']['eu'] == 'apoio'
+    assert conjugate('falar')['forms']['fut_ir']['nos'] == 'vamos falar'
+    assert conjugate('ir')['forms']['pres']['nos'] == 'vamos'
+
+
+def test_invalid_cells_flagged():
+    assert 'perf.nos' in conjugate('pagar')['invalid']
+    assert 'pres.eu' in conjugate('voar')['invalid']
+    assert conjugate('falar')['invalid'] == []
+
+
+def test_conjugate_result_is_a_copy():
+    v = conjugate('falar')
+    v['forms']['pres']['eu'] = 'X'
+    assert conjugate('falar')['forms']['pres']['eu'] == 'falo'

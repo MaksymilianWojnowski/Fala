@@ -1,6 +1,8 @@
 """Brazilian Portuguese conjugation tables built from verbecc."""
+import copy
 import json
 import logging
+import re
 from functools import lru_cache
 
 from verbecc import CompleteConjugator, LangCodeISO639_1 as Lang
@@ -20,6 +22,7 @@ PRONOUN_SLOT = {'eu': 'eu', 'tu': 'tu', 'ele': 'ele', 'você': 'ele', 'nós': 'n
 IMP_SLOTS = ('ele', 'nos', 'eles')
 CONNECTIVES = {'que', 'se', 'quando', 'por', 'não'}
 MODELS = {'ar': 'falar', 'er': 'comer', 'ir': 'partir'}
+CLEAN = re.compile(r'^[a-zà-öø-ÿ]+( [a-zà-öø-ÿ]+)*$')
 
 
 def strip_pronoun(c: str, pr: str) -> str:
@@ -29,8 +32,15 @@ def strip_pronoun(c: str, pr: str) -> str:
 def normalize_br(tense: str, slot: str, form: str) -> str:
     # verbecc returns PT-PT accents in the perfeito nós form.
     if tense == 'perf' and slot == 'nos':
-        return form.replace('ámos', 'amos')
-    return form
+        form = form.replace('ámos', 'amos')
+    if tense == 'pres' and slot == 'nos' and form == 'imos':
+        return 'vamos'  # BR uses vamos for ir + nós
+    # pre-2009 spellings that verbecc still emits
+    form = re.sub(r'êem\b', 'eem', form)
+    form = re.sub(r'([gq])ú(e|es|em)$', r'\1u\2', form)
+    if form == 'pára':
+        form = 'para'
+    return re.sub(r'ói(a|as|am|o|e|es|em)$', r'oi\1', form)
 
 
 @lru_cache(maxsize=None)
@@ -110,18 +120,27 @@ def irregular_cells(lemma: str, forms: dict, participle: str) -> list[str]:
     return out
 
 
-@lru_cache(maxsize=None)
 def conjugate(lemma: str) -> dict:
+    return copy.deepcopy(_conjugate(lemma))
+
+
+@lru_cache(maxsize=None)
+def _conjugate(lemma: str) -> dict:
     base = simple_forms(lemma)
     participle, gerund = base['participle'], base['gerund']
     aux = [simple_forms(x)['forms'] for x in ('ter', 'estar', 'ir')]
     forms = {**base['forms'], **compound(*aux, lemma, participle, gerund)}
     forms = {t: forms[t] for t in TENSES}
+    invalid = [f'{t}.{s}' for t in forms for s, form in forms[t].items()
+               if not all(CLEAN.match(a) for a in form.split('|'))]
+    invalid += [k for k in ('participle', 'gerund')
+                if not all(CLEAN.match(a) for a in base[k].split('|'))]
     return {
         'lemma': lemma,
         'participle': participle,
         'gerund': gerund,
         'forms': forms,
         'irregular': irregular_cells(lemma, forms, participle),
+        'invalid': invalid,
         'predicted': base['predicted'],
     }
