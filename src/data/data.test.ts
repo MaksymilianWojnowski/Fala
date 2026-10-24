@@ -15,3 +15,9 @@ test('ranks are 1..n and unique', () => {
 test('double participles are kept', () => {
   expect(alternates(verbs.find(v => v.lemma === 'pagar')!.participle)).toContain('pago');
 });
+
+test('reviewed forms are pinned', () => {
+  expect(alternates(verbs.find(v => v.lemma === 'destruir')!.forms.pres.eles!)).toContain('destroem');
+  expect(alternates(verbs.find(v => v.lemma === 'haver')!.forms.pres.nos!)[0]).toBe('havemos');
+  expect(alternates(verbs.find(v => v.lemma === 'morrer')!.participle)[0]).toBe('morrido');
+});

@@ -82,8 +82,12 @@ def diff_rows(lemma: str, verb: dict, wiki: dict[str, set[str]], wiki_participle
             wf = wiki.get(field, set())
             if field in invalid or (wf and ours.split('|')[0] not in wf):
                 rows.append(_row(lemma, field, ours, wf))
-    if 'participle' in invalid or wiki_participles - set(verb['participle'].split('|')):
-        rows.append(_row(lemma, 'participle', verb['participle'], wiki_participles))
+    for k in ('participle', 'gerund'):  # Wiktionary's participle list is checked; gerund only via invalid
+        if k not in verb:
+            continue
+        wv = wiki_participles if k == 'participle' else set()
+        if k in invalid or wv - set(verb[k].split('|')):
+            rows.append(_row(lemma, k, verb[k], wv))
     return rows
 
 

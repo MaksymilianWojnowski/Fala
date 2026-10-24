@@ -2865,7 +2865,7 @@
     "lemma": "morrer",
     "en": "to die (to stop living)",
     "rank": 24,
-    "participle": "morto|morrido",
+    "participle": "morrido|morto",
     "gerund": "morrendo",
     "forms": {
       "pres": {
@@ -2890,11 +2890,11 @@
         "eles": "morriam"
       },
       "mqp_comp": {
-        "eu": "tinha morto|tinha morrido",
-        "tu": "tinhas morto|tinhas morrido",
-        "ele": "tinha morto|tinha morrido",
-        "nos": "tínhamos morto|tínhamos morrido",
-        "eles": "tinham morto|tinham morrido"
+        "eu": "tinha morrido|tinha morto",
+        "tu": "tinhas morrido|tinhas morto",
+        "ele": "tinha morrido|tinha morto",
+        "nos": "tínhamos morrido|tínhamos morto",
+        "eles": "tinham morrido|tinham morto"
       },
       "fut_ir": {
         "eu": "vou morrer",
@@ -2925,11 +2925,11 @@
         "eles": "estão morrendo"
       },
       "perf_comp": {
-        "eu": "tenho morto|tenho morrido",
-        "tu": "tens morto|tens morrido",
-        "ele": "tem morto|tem morrido",
-        "nos": "temos morto|temos morrido",
-        "eles": "têm morto|têm morrido"
+        "eu": "tenho morrido|tenho morto",
+        "tu": "tens morrido|tens morto",
+        "ele": "tem morrido|tem morto",
+        "nos": "temos morrido|temos morto",
+        "eles": "têm morrido|têm morto"
       },
       "imp": {
         "ele": "morra",
@@ -2965,19 +2965,7 @@
         "eles": "morrerem"
       }
     },
-    "irregular": [
-      "participle",
-      "mqp_comp.eu",
-      "mqp_comp.tu",
-      "mqp_comp.ele",
-      "mqp_comp.nos",
-      "mqp_comp.eles",
-      "perf_comp.eu",
-      "perf_comp.tu",
-      "perf_comp.ele",
-      "perf_comp.nos",
-      "perf_comp.eles"
-    ]
+    "irregular": []
   },
   {
     "lemma": "contar",
@@ -9488,7 +9476,7 @@
         "eu": "hei",
         "tu": "hás",
         "ele": "há",
-        "nos": "hemos",
+        "nos": "havemos",
         "eles": "hão"
       },
       "perf": {
@@ -9585,7 +9573,6 @@
       "pres.eu",
       "pres.tu",
       "pres.ele",
-      "pres.nos",
       "pres.eles",
       "perf.eu",
       "perf.tu",
@@ -13259,7 +13246,7 @@
         "tu": "destróis",
         "ele": "destrói",
         "nos": "destruímos",
-        "eles": "destruem"
+        "eles": "destroem"
       },
       "perf": {
         "eu": "destruí",
@@ -13355,6 +13342,7 @@
       "pres.tu",
       "pres.ele",
       "pres.nos",
+      "pres.eles",
       "perf.eu",
       "perf.tu",
       "perf.nos",

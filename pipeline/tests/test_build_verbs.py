@@ -46,3 +46,9 @@ def test_manual_row_for_field_without_diff_is_applied():
 
 def test_select_verbs_skips_words_verbecc_cannot_conjugate():
     assert select_verbs(['der 100', 'ser 90'], 1, []) == ['ser']
+
+
+def test_invalid_gerund_gets_a_row():
+    verb = {'lemma': 'pagar', 'participle': 'pago', 'gerund': 'pag)ndo', 'invalid': ['gerund'], 'forms': {}}
+    assert diff_rows('pagar', verb, {}, set()) == [
+        {'lemma': 'pagar', 'field': 'gerund', 'ours': 'pag)ndo', 'wiktionary': '', 'chosen': ''}]

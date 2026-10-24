@@ -11,7 +11,7 @@ matar,participle,morto,matado|morto,morto|matado
 entrar,perf.nos,entr,entramos|entrámos,entramos
 pensar,perf.nos,pens,pensamos|pensámos,pensamos
 chegar,perf.nos,cheg,chegamos|chegámos,chegamos
-morrer,participle,morto,morrido|morto,morto|morrido
+morrer,participle,morto,morrido|morto,morrido|morto
 contar,perf.nos,cont,contamos|contámos,contamos
 passar,perf.nos,pass,passamos|passámos,passamos
 começar,perf.nos,come,começamos|começámos,começamos
@@ -42,6 +42,7 @@ terminar,perf.nos,termin,terminamos|terminámos,terminamos
 explicar,perf.nos,expli,explicamos|explicámos,explicamos
 lembrar,perf.nos,lembr,lembramos|lembrámos,lembramos
 procurar,perf.nos,procur,procuramos|procurámos,procuramos
+haver,pres.nos,hemos,havemos|hemos,havemos
 buscar,perf.nos,bus),buscamos|buscámos,buscamos
 mandar,perf.nos,mand,mandamos|mandámos,mandamos
 provar,perf.nos,prov,provamos|provámos,provamos
@@ -62,6 +63,7 @@ imaginar,perf.nos,imagin,imaginamos|imaginámos,imaginamos
 evitar,perf.nos,evit,evitamos|evitámos,evitamos
 destruir,pres.ele,destrui,destrói|destrui,destrói
 destruir,pres.tu,destruis,destróis|destruis,destróis
+destruir,pres.eles,destruem,destroem|destruem,destroem
 brincar,perf.nos,brin,brincamos|brincámos,brincamos
 limpar,perf.nos,limp,limpamos|limpámos,limpamos
 limpar,participle,limpo,limpado|limpo,limpo|limpado
