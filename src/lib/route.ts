@@ -7,19 +7,28 @@ export type Route =
   | { name: 'session'; unit?: string; test?: boolean; verb?: string }
   | { name: 'settings'; sync?: string };
 
+const TODAY: Route = { name: 'today' };
+
 export function parseRoute(hash: string): Route {
   const [path, query = ''] = hash.replace(/^#/, '').split('?');
   const parts = path.split('/').filter(Boolean);
   const q = new URLSearchParams(query);
+  // Browsers percent-encode non-ASCII segments; a malformed escape (e.g. %E0%A4%A) throws and falls back to today.
+  let seg: string | undefined;
+  try {
+    seg = parts[1] && decodeURIComponent(parts[1]);
+  } catch {
+    return TODAY;
+  }
   switch (parts[0]) {
     case 'path':
       return { name: 'path' };
     case 'learn':
-      return parts[1] ? { name: 'learn', unit: parts[1] } : { name: 'today' };
+      return seg ? { name: 'learn', unit: seg } : TODAY;
     case 'progress':
       return { name: 'progress' };
     case 'verbs':
-      return parts[1] ? { name: 'verbs', lemma: parts[1] } : { name: 'verbs' };
+      return seg ? { name: 'verbs', lemma: seg } : { name: 'verbs' };
     case 'session': {
       const r: Route = { name: 'session' };
       if (q.has('unit')) r.unit = q.get('unit')!;
@@ -43,9 +52,9 @@ export function toHash(r: Route): string {
     case 'progress':
       return '#/progress';
     case 'learn':
-      return `#/learn/${r.unit}`;
+      return `#/learn/${encodeURIComponent(r.unit)}`;
     case 'verbs':
-      return r.lemma ? `#/verbs/${r.lemma}` : '#/verbs';
+      return r.lemma ? `#/verbs/${encodeURIComponent(r.lemma)}` : '#/verbs';
     case 'session': {
       const q = new URLSearchParams();
       if (r.unit) q.set('unit', r.unit);

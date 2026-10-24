@@ -1,13 +1,57 @@
-import { useSyncExternalStore } from 'react';
+import { useSyncExternalStore, type ReactNode } from 'react';
 import { parseRoute, type Route } from './lib/route';
 
 type TabName = 'today' | 'path' | 'progress' | 'verbs';
 
-const TABS: { name: TabName; label: string; hash: string; icon: string }[] = [
-  { name: 'today', label: 'Today', hash: '#/today', icon: 'M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4' },
-  { name: 'path', label: 'Path', hash: '#/path', icon: 'M4 6h6v4H4zM14 14h6v4h-6zM10 8h4v8' },
-  { name: 'progress', label: 'Progress', hash: '#/progress', icon: 'M4 20V10M10 20V4M16 20v-7M22 20H2' },
-  { name: 'verbs', label: 'Verbs', hash: '#/verbs', icon: 'M4 5h16v14H4zM8 9h8M8 13h5' },
+const svgProps = {
+  width: 22,
+  height: 22,
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.75,
+  strokeLinecap: 'round' as const,
+  strokeLinejoin: 'round' as const,
+  'aria-hidden': true,
+};
+
+const TABS: { name: TabName; label: string; hash: string; icon: ReactNode }[] = [
+  {
+    name: 'today', label: 'Today', hash: '#/today',
+    icon: (
+      <svg {...svgProps}>
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+      </svg>
+    ),
+  },
+  {
+    name: 'path', label: 'Path', hash: '#/path',
+    icon: (
+      <svg {...svgProps}>
+        <circle cx="6" cy="19" r="2" />
+        <circle cx="18" cy="5" r="2" />
+        <path d="M8 19h8a3 3 0 0 0 0-6H8a3 3 0 0 1 0-6h8" />
+      </svg>
+    ),
+  },
+  {
+    name: 'progress', label: 'Progress', hash: '#/progress',
+    icon: (
+      <svg {...svgProps}>
+        <path d="M4 20V11M10 20V5M16 20v-6M21 20H3" />
+      </svg>
+    ),
+  },
+  {
+    name: 'verbs', label: 'Verbs', hash: '#/verbs',
+    icon: (
+      <svg {...svgProps}>
+        <path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2z" />
+        <path d="M4 20a2 2 0 0 0 2 2h13v-4" />
+      </svg>
+    ),
+  },
 ];
 
 const subscribe = (cb: () => void) => {
@@ -32,12 +76,15 @@ export function App() {
         <h1>{route.name}</h1>
       </main>
       {route.name !== 'session' && (
-        <nav aria-label="Main">
+        <nav className="tabbar" aria-label="Main">
           {TABS.map((t) => (
-            <a key={t.name} href={t.hash} aria-current={active === t.name ? 'page' : undefined}>
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                <path d={t.icon} />
-              </svg>
+            <a
+              key={t.name}
+              className="tab"
+              href={t.hash}
+              aria-current={active === t.name ? 'page' : undefined}
+            >
+              {t.icon}
               <span>{t.label}</span>
             </a>
           ))}
