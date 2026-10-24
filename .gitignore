@@ -4,3 +4,4 @@ pipeline/.venv
 pipeline/.cache
 .wrangler
 verbecc.log
+__pycache__/
