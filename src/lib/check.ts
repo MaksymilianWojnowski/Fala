@@ -45,12 +45,14 @@ export function check(input: string, expected: string, verb?: Verb, tense?: Tens
   return { result: 'wrong' };
 }
 
-// Span of expected outside its common prefix and suffix with input.
+// Span of the displayed form (first alternative) outside its common prefix and suffix with the normalized input.
 export function diffSpan(expected: string, input: string): [start: number, end: number] {
-  const max = Math.min(expected.length, input.length);
+  const shown = alternates(expected)[0].toLowerCase();
+  const typed = normalize(input);
+  const max = Math.min(shown.length, typed.length);
   let start = 0;
-  while (start < max && expected[start] === input[start]) start++;
+  while (start < max && shown[start] === typed[start]) start++;
   let tail = 0;
-  while (tail < max - start && expected[expected.length - 1 - tail] === input[input.length - 1 - tail]) tail++;
-  return [start, expected.length - tail];
+  while (tail < max - start && shown[shown.length - 1 - tail] === typed[typed.length - 1 - tail]) tail++;
+  return [start, shown.length - tail];
 }

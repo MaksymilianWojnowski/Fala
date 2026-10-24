@@ -44,3 +44,13 @@ test('diffSpan returns the differing part of expected', () => {
   expect(diffSpan('brincávamos', 'brincavamos')).toEqual([5, 6]);
   expect(diffSpan('fizemos', 'fazemos')).toEqual([1, 2]);
 });
+
+test('diffSpan compares the displayed alternative against normalized input', () => {
+  // Cap rule: the common suffix is limited to min(length) - common prefix, so 'o' is the only shared tail.
+  expect(diffSpan('pago|pagado', 'pagado')).toEqual([3, 3]);
+  expect(diffSpan('brincávamos', 'brincavamos.')).toEqual([5, 6]);
+  expect(diffSpan('brincávamos', 'Brincavamos')).toEqual([5, 6]);
+  // An empty span (start === end) means nothing to highlight.
+  const [start, end] = diffSpan('fizemos', 'fizemos');
+  expect(start).toBe(end);
+});
