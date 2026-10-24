@@ -12,6 +12,7 @@ from pipeline.verbs import compound, conjugate, irregular_cells, simple_forms
 ROOT = Path(__file__).resolve().parents[1]
 REVIEW = Path(__file__).resolve().parent / 'review.csv'
 EXTRA = Path(__file__).resolve().parent / 'extra_verbs.txt'
+SKIP = Path(__file__).resolve().parent / 'skip_verbs.txt'
 OUT = ROOT / 'src/data/verbs.json'
 CANDIDATE = re.compile(r'^[a-zà-úç]+(ar|er|ir)$')
 WIKI_TAGS = {'pres': {'indicative', 'present'}, 'perf': {'indicative', 'preterite'}, 'imperf': {'indicative', 'imperfect'},
@@ -25,17 +26,21 @@ LETTERS = re.compile(r'^[a-zà-úç]+$')
 FIELDS = ['lemma', 'field', 'ours', 'wiktionary', 'chosen']
 
 
-def select_verbs(freq_lines: list[str], n: int, extra: list[str]) -> list[str]:
+def select_verbs(freq_lines: list[str], n: int, extra: list[str], skip: set[str] = frozenset()) -> list[str]:
     out = []
     for line in freq_lines:
         if len(out) == n:
             break
         word = line.split()[0]
-        if not (CANDIDATE.match(word) or word == 'pôr'):
+        if word in skip or not (CANDIDATE.match(word) or word == 'pôr'):
             continue
-        if not conjugate(word)['predicted']:
-            out.append(word)
-    out += [w for w in extra if w not in out]
+        try:
+            if conjugate(word)['predicted']:
+                continue
+        except Exception:  # verbecc raises on some non-verbs such as 'der'
+            continue
+        out.append(word)
+    out += [w for w in extra if w not in out and w not in skip]
     return out
 
 
@@ -101,40 +106,47 @@ def apply_review(verb: dict, rows: list[dict]) -> dict:
     return v
 
 
-def _read_review() -> dict[tuple[str, str], str]:
+def _read_review() -> list[dict]:
     if not REVIEW.exists():
-        return {}
+        return []
     with REVIEW.open(encoding='utf-8', newline='') as f:
-        return {(r['lemma'], r['field']): r['chosen'] for r in csv.DictReader(f)}
+        return list(csv.DictReader(f))
+
+
+def merge_review(fresh: list[dict], old: list[dict], lemmas: set[str]) -> list[dict]:
+    """Fresh diff rows keep their saved choice; saved rows with a choice survive even when the diff no longer produces them (manual overrides)."""
+    chosen = {(r['lemma'], r['field']): r['chosen'] for r in old}
+    keys = {(r['lemma'], r['field']) for r in fresh}
+    rows = [dict(r, chosen=chosen.get((r['lemma'], r['field']), '')) for r in fresh]
+    rows += [dict(r) for r in old if r['lemma'] in lemmas and r['chosen'] and (r['lemma'], r['field']) not in keys]
+    return rows
 
 
 def main() -> int:
     freq = fetch(FREQ_URL, 'pt_br_50k.txt').read_text(encoding='utf-8').splitlines()
-    lemmas = select_verbs(freq, 150, EXTRA.read_text(encoding='utf-8').split())
-    old_choices = _read_review()
-    all_rows: list[dict] = []
-    verbs = []
-    for rank, lemma in enumerate(lemmas, 1):
+    skip = set(SKIP.read_text(encoding='utf-8').split())
+    lemmas = select_verbs(freq, 150, EXTRA.read_text(encoding='utf-8').split(), skip)
+    fresh: list[dict] = []
+    glosses: dict[str, str] = {}
+    for lemma in lemmas:
         v = conjugate(lemma)
         path = fetch(kaikki_url(lemma), f'kaikki/{lemma}.jsonl')
         entries = [json.loads(line) for line in path.read_text(encoding='utf-8').splitlines() if line.strip()]
         if not entries:
             print(f'warning: no Wiktionary data for {lemma}', file=sys.stderr)
-        wiki, parts, gloss = wiki_forms(entries)
-        rows = diff_rows(lemma, v, wiki, parts)
-        for r in rows:
-            r['chosen'] = old_choices.get((lemma, r['field']), '')
-        all_rows += rows
-        verbs.append({'lemma': lemma, 'en': gloss, 'rank': rank, 'participle': '', 'gerund': '', 'forms': None,
-                      'irregular': None, '_row': rows})
+        wiki, parts, glosses[lemma] = wiki_forms(entries)
+        fresh += diff_rows(lemma, v, wiki, parts)
+    all_rows = merge_review(fresh, _read_review(), set(lemmas))
+    order = {lemma: i for i, lemma in enumerate(lemmas)}
+    all_rows.sort(key=lambda r: order[r['lemma']])  # stable: keeps field order within a verb
     with REVIEW.open('w', encoding='utf-8', newline='') as f:
         w = csv.DictWriter(f, fieldnames=FIELDS)
         w.writeheader()
         w.writerows(all_rows)
     out = []
-    for item in verbs:
-        v = apply_review(conjugate(item['lemma']), item.pop('_row'))
-        out.append({'lemma': v['lemma'], 'en': item['en'], 'rank': item['rank'], 'participle': v['participle'],
+    for rank, lemma in enumerate(lemmas, 1):
+        v = apply_review(conjugate(lemma), [r for r in all_rows if r['lemma'] == lemma])
+        out.append({'lemma': v['lemma'], 'en': glosses[lemma], 'rank': rank, 'participle': v['participle'],
                     'gerund': v['gerund'], 'forms': v['forms'], 'irregular': v['irregular']})
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(out, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

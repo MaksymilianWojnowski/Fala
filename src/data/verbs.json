@@ -4963,132 +4963,9 @@
     "irregular": []
   },
   {
-    "lemma": "prazer",
-    "en": "synonym of aprazer",
-    "rank": 43,
-    "participle": "prazido",
-    "gerund": "prazendo",
-    "forms": {
-      "pres": {
-        "eu": "prazo",
-        "tu": "prazes",
-        "ele": "praz",
-        "nos": "prazemos",
-        "eles": "prazem"
-      },
-      "perf": {
-        "eu": "prouve",
-        "tu": "prouveste",
-        "ele": "prouve",
-        "nos": "prouvemos",
-        "eles": "prouveram"
-      },
-      "imperf": {
-        "eu": "prazia",
-        "tu": "prazias",
-        "ele": "prazia",
-        "nos": "prazíamos",
-        "eles": "praziam"
-      },
-      "mqp_comp": {
-        "eu": "tinha prazido",
-        "tu": "tinhas prazido",
-        "ele": "tinha prazido",
-        "nos": "tínhamos prazido",
-        "eles": "tinham prazido"
-      },
-      "fut_ir": {
-        "eu": "vou prazer",
-        "tu": "vais prazer",
-        "ele": "vai prazer",
-        "nos": "vamos prazer",
-        "eles": "vão prazer"
-      },
-      "fut": {
-        "eu": "prazerei",
-        "tu": "prazerás",
-        "ele": "prazerá",
-        "nos": "prazeremos",
-        "eles": "prazerão"
-      },
-      "cond": {
-        "eu": "prazeria",
-        "tu": "prazerias",
-        "ele": "prazeria",
-        "nos": "prazeríamos",
-        "eles": "prazeriam"
-      },
-      "prog": {
-        "eu": "estou prazendo",
-        "tu": "estás prazendo",
-        "ele": "está prazendo",
-        "nos": "estamos prazendo",
-        "eles": "estão prazendo"
-      },
-      "perf_comp": {
-        "eu": "tenho prazido",
-        "tu": "tens prazido",
-        "ele": "tem prazido",
-        "nos": "temos prazido",
-        "eles": "têm prazido"
-      },
-      "imp": {
-        "ele": "praza",
-        "nos": "prazamos",
-        "eles": "prazam"
-      },
-      "subj_pres": {
-        "eu": "praza",
-        "tu": "prazas",
-        "ele": "praza",
-        "nos": "prazamos",
-        "eles": "prazam"
-      },
-      "subj_imperf": {
-        "eu": "prouvesse",
-        "tu": "prouvesses",
-        "ele": "prouvesse",
-        "nos": "prouvéssemos",
-        "eles": "prouvessem"
-      },
-      "subj_fut": {
-        "eu": "prouver",
-        "tu": "prouveres",
-        "ele": "prouver",
-        "nos": "prouvermos",
-        "eles": "prouverem"
-      },
-      "inf_pess": {
-        "eu": "prazer",
-        "tu": "prazeres",
-        "ele": "prazer",
-        "nos": "prazermos",
-        "eles": "prazerem"
-      }
-    },
-    "irregular": [
-      "pres.ele",
-      "perf.eu",
-      "perf.tu",
-      "perf.ele",
-      "perf.nos",
-      "perf.eles",
-      "subj_imperf.eu",
-      "subj_imperf.tu",
-      "subj_imperf.ele",
-      "subj_imperf.nos",
-      "subj_imperf.eles",
-      "subj_fut.eu",
-      "subj_fut.tu",
-      "subj_fut.ele",
-      "subj_fut.nos",
-      "subj_fut.eles"
-    ]
-  },
-  {
     "lemma": "mudar",
     "en": "to change (to become or cause to become something different)",
-    "rank": 44,
+    "rank": 43,
     "participle": "mudado",
     "gerund": "mudando",
     "forms": {
@@ -5194,7 +5071,7 @@
   {
     "lemma": "perder",
     "en": "to lose (an object, a job, interest etc.)",
-    "rank": 45,
+    "rank": 44,
     "participle": "perdido",
     "gerund": "perdendo",
     "forms": {
@@ -5310,7 +5187,7 @@
   {
     "lemma": "pagar",
     "en": "to pay",
-    "rank": 46,
+    "rank": 45,
     "participle": "pago|pagado",
     "gerund": "pagando",
     "forms": {
@@ -5437,7 +5314,7 @@
   {
     "lemma": "descobrir",
     "en": "to discover (to find something for the first time)",
-    "rank": 47,
+    "rank": 46,
     "participle": "descoberto",
     "gerund": "descobrindo",
     "forms": {
@@ -5564,7 +5441,7 @@
   {
     "lemma": "conversar",
     "en": "to talk; to chat (to engage in conversation)",
-    "rank": 48,
+    "rank": 47,
     "participle": "conversado",
     "gerund": "conversando",
     "forms": {
@@ -5670,7 +5547,7 @@
   {
     "lemma": "achar",
     "en": "to find; to encounter (to come across something that was unknown or had been lost)",
-    "rank": 49,
+    "rank": 48,
     "participle": "achado",
     "gerund": "achando",
     "forms": {
@@ -5776,7 +5653,7 @@
   {
     "lemma": "acreditar",
     "en": "to believe (to accept that someone is telling the truth)",
-    "rank": 50,
+    "rank": 49,
     "participle": "acreditado",
     "gerund": "acreditando",
     "forms": {
@@ -5882,7 +5759,7 @@
   {
     "lemma": "olhar",
     "en": "to look",
-    "rank": 51,
+    "rank": 50,
     "participle": "olhado",
     "gerund": "olhando",
     "forms": {
@@ -5988,7 +5865,7 @@
   {
     "lemma": "colocar",
     "en": "to place; to put",
-    "rank": 52,
+    "rank": 51,
     "participle": "colocado",
     "gerund": "colocando",
     "forms": {
@@ -6104,7 +5981,7 @@
   {
     "lemma": "pedir",
     "en": "to ask for; to request (to express the need or desire for something)",
-    "rank": 53,
+    "rank": 52,
     "participle": "pedido",
     "gerund": "pedindo",
     "forms": {
@@ -6220,7 +6097,7 @@
   {
     "lemma": "ligar",
     "en": "to link; to connect; to join (to put things together so they work together)",
-    "rank": 54,
+    "rank": 53,
     "participle": "ligado",
     "gerund": "ligando",
     "forms": {
@@ -6336,7 +6213,7 @@
   {
     "lemma": "mostrar",
     "en": "to show",
-    "rank": 55,
+    "rank": 54,
     "participle": "mostrado",
     "gerund": "mostrando",
     "forms": {
@@ -6442,7 +6319,7 @@
   {
     "lemma": "acabar",
     "en": "to finish (to be over, completed)",
-    "rank": 56,
+    "rank": 55,
     "participle": "acabado",
     "gerund": "acabando",
     "forms": {
@@ -6548,7 +6425,7 @@
   {
     "lemma": "continuar",
     "en": "to continue; to go on (with) (to not stop)",
-    "rank": 57,
+    "rank": 56,
     "participle": "continuado",
     "gerund": "continuando",
     "forms": {
@@ -6654,7 +6531,7 @@
   {
     "lemma": "jogar",
     "en": "to play (to participate in a sport or game)",
-    "rank": 58,
+    "rank": 57,
     "participle": "jogado",
     "gerund": "jogando",
     "forms": {
@@ -6770,7 +6647,7 @@
   {
     "lemma": "perguntar",
     "en": "to ask (request an answer)",
-    "rank": 59,
+    "rank": 58,
     "participle": "perguntado",
     "gerund": "perguntando",
     "forms": {
@@ -6876,7 +6753,7 @@
   {
     "lemma": "manter",
     "en": "to keep, maintain",
-    "rank": 60,
+    "rank": 59,
     "participle": "mantido",
     "gerund": "mantendo",
     "forms": {
@@ -7015,7 +6892,7 @@
   {
     "lemma": "querer",
     "en": "to want; to wish; to desire",
-    "rank": 61,
+    "rank": 60,
     "participle": "querido",
     "gerund": "querendo",
     "forms": {
@@ -7146,7 +7023,7 @@
   {
     "lemma": "chamar",
     "en": "to call; to summon (to ask someone to come)",
-    "rank": 62,
+    "rank": 61,
     "participle": "chamado",
     "gerund": "chamando",
     "forms": {
@@ -7252,7 +7129,7 @@
   {
     "lemma": "comprar",
     "en": "to buy",
-    "rank": 63,
+    "rank": 62,
     "participle": "comprado",
     "gerund": "comprando",
     "forms": {
@@ -7358,7 +7235,7 @@
   {
     "lemma": "ganhar",
     "en": "to win (to achieve victory in a game, a war, etc)",
-    "rank": 64,
+    "rank": 63,
     "participle": "ganho|ganhado",
     "gerund": "ganhando",
     "forms": {
@@ -7476,7 +7353,7 @@
   {
     "lemma": "precisar",
     "en": "to need",
-    "rank": 65,
+    "rank": 64,
     "participle": "precisado",
     "gerund": "precisando",
     "forms": {
@@ -7582,7 +7459,7 @@
   {
     "lemma": "cuidar",
     "en": "to take care (of); to look after (to provide care for)",
-    "rank": 66,
+    "rank": 65,
     "participle": "cuidado",
     "gerund": "cuidando",
     "forms": {
@@ -7688,7 +7565,7 @@
   {
     "lemma": "casar",
     "en": "to marry",
-    "rank": 67,
+    "rank": 66,
     "participle": "casado",
     "gerund": "casando",
     "forms": {
@@ -7794,7 +7671,7 @@
   {
     "lemma": "entender",
     "en": "to understand, to grasp, to comprehend",
-    "rank": 68,
+    "rank": 67,
     "participle": "entendido",
     "gerund": "entendendo",
     "forms": {
@@ -7900,7 +7777,7 @@
   {
     "lemma": "andar",
     "en": "to walk (to move on one’s feet)",
-    "rank": 69,
+    "rank": 68,
     "participle": "andado",
     "gerund": "andando",
     "forms": {
@@ -8006,7 +7883,7 @@
   {
     "lemma": "partir",
     "en": "to split (divide something, especially in two roughly equal parts)",
-    "rank": 70,
+    "rank": 69,
     "participle": "partido",
     "gerund": "partindo",
     "forms": {
@@ -8112,7 +7989,7 @@
   {
     "lemma": "salvar",
     "en": "to save (to help someone to survive; to make sure something isn’t destroyed)",
-    "rank": 71,
+    "rank": 70,
     "participle": "salvo|salvado",
     "gerund": "salvando",
     "forms": {
@@ -8230,7 +8107,7 @@
   {
     "lemma": "conhecer",
     "en": "to know (be acquainted or familiar with)",
-    "rank": 72,
+    "rank": 71,
     "participle": "conhecido",
     "gerund": "conhecendo",
     "forms": {
@@ -8346,7 +8223,7 @@
   {
     "lemma": "trazer",
     "en": "bring (to transport toward somebody/somewhere)",
-    "rank": 73,
+    "rank": 72,
     "participle": "trazido",
     "gerund": "trazendo",
     "forms": {
@@ -8488,7 +8365,7 @@
   {
     "lemma": "seguir",
     "en": "to follow (to go or come after in physical space)",
-    "rank": 74,
+    "rank": 73,
     "participle": "seguido",
     "gerund": "seguindo",
     "forms": {
@@ -8604,7 +8481,7 @@
   {
     "lemma": "terminar",
     "en": "to finish; to complete (to reach the end of an activity)",
-    "rank": 75,
+    "rank": 74,
     "participle": "terminado",
     "gerund": "terminando",
     "forms": {
@@ -8710,7 +8587,7 @@
   {
     "lemma": "beber",
     "en": "to drink (something)",
-    "rank": 76,
+    "rank": 75,
     "participle": "bebido",
     "gerund": "bebendo",
     "forms": {
@@ -8816,7 +8693,7 @@
   {
     "lemma": "abrir",
     "en": "to open",
-    "rank": 77,
+    "rank": 76,
     "participle": "aberto",
     "gerund": "abrindo",
     "forms": {
@@ -8934,7 +8811,7 @@
   {
     "lemma": "lutar",
     "en": "to fight (participate in a conflict)",
-    "rank": 78,
+    "rank": 77,
     "participle": "lutado",
     "gerund": "lutando",
     "forms": {
@@ -9040,7 +8917,7 @@
   {
     "lemma": "explicar",
     "en": "to explain",
-    "rank": 79,
+    "rank": 78,
     "participle": "explicado",
     "gerund": "explicando",
     "forms": {
@@ -9156,7 +9033,7 @@
   {
     "lemma": "lembrar",
     "en": "to remember",
-    "rank": 80,
+    "rank": 79,
     "participle": "lembrado",
     "gerund": "lembrando",
     "forms": {
@@ -9262,7 +9139,7 @@
   {
     "lemma": "procurar",
     "en": "to search; to seek; to look for",
-    "rank": 81,
+    "rank": 80,
     "participle": "procurado",
     "gerund": "procurando",
     "forms": {
@@ -9368,7 +9245,7 @@
   {
     "lemma": "ler",
     "en": "to read (to look at and interpret written information)",
-    "rank": 82,
+    "rank": 81,
     "participle": "lido",
     "gerund": "lendo",
     "forms": {
@@ -9487,7 +9364,7 @@
   {
     "lemma": "tocar",
     "en": "to touch, to finger, to feel (tactually)",
-    "rank": 83,
+    "rank": 82,
     "participle": "tocado",
     "gerund": "tocando",
     "forms": {
@@ -9603,7 +9480,7 @@
   {
     "lemma": "haver",
     "en": "there be; exist",
-    "rank": 84,
+    "rank": 83,
     "participle": "havido",
     "gerund": "havendo",
     "forms": {
@@ -9738,7 +9615,7 @@
   {
     "lemma": "cair",
     "en": "to fall; to fall down; to drop",
-    "rank": 85,
+    "rank": 84,
     "participle": "caído",
     "gerund": "caindo",
     "forms": {
@@ -9884,7 +9761,7 @@
   {
     "lemma": "esquecer",
     "en": "to forget",
-    "rank": 86,
+    "rank": 85,
     "participle": "esquecido",
     "gerund": "esquecendo",
     "forms": {
@@ -10000,7 +9877,7 @@
   {
     "lemma": "parecer",
     "en": "to seem",
-    "rank": 87,
+    "rank": 86,
     "participle": "parecido",
     "gerund": "parecendo",
     "forms": {
@@ -10116,7 +9993,7 @@
   {
     "lemma": "buscar",
     "en": "to search for",
-    "rank": 88,
+    "rank": 87,
     "participle": "buscado",
     "gerund": "buscando",
     "forms": {
@@ -10232,7 +10109,7 @@
   {
     "lemma": "fugir",
     "en": "to run away; to flee (to move away from something unpleasant quickly or suddenly)",
-    "rank": 89,
+    "rank": 88,
     "participle": "fugido",
     "gerund": "fugindo",
     "forms": {
@@ -10351,7 +10228,7 @@
   {
     "lemma": "proteger",
     "en": "to protect",
-    "rank": 90,
+    "rank": 89,
     "participle": "protegido",
     "gerund": "protegendo",
     "forms": {
@@ -10467,7 +10344,7 @@
   {
     "lemma": "escrever",
     "en": "to write (to form letters, etc.)",
-    "rank": 91,
+    "rank": 90,
     "participle": "escrito",
     "gerund": "escrevendo",
     "forms": {
@@ -10585,7 +10462,7 @@
   {
     "lemma": "mandar",
     "en": "to order, command",
-    "rank": 92,
+    "rank": 91,
     "participle": "mandado",
     "gerund": "mandando",
     "forms": {
@@ -10691,7 +10568,7 @@
   {
     "lemma": "bater",
     "en": "to beat; to beat up (to attack someone violently)",
-    "rank": 93,
+    "rank": 92,
     "participle": "batido",
     "gerund": "batendo",
     "forms": {
@@ -10797,7 +10674,7 @@
   {
     "lemma": "provar",
     "en": "to prove, show, to demonstrate that something is true, to give proof for",
-    "rank": 94,
+    "rank": 93,
     "participle": "provado",
     "gerund": "provando",
     "forms": {
@@ -10903,7 +10780,7 @@
   {
     "lemma": "aprender",
     "en": "to learn, to acquire knowledge",
-    "rank": 95,
+    "rank": 94,
     "participle": "aprendido",
     "gerund": "aprendendo",
     "forms": {
@@ -11009,7 +10886,7 @@
   {
     "lemma": "correr",
     "en": "to run (to move quickly on one’s feet)",
-    "rank": 96,
+    "rank": 95,
     "participle": "corrido",
     "gerund": "correndo",
     "forms": {
@@ -11115,7 +10992,7 @@
   {
     "lemma": "gostar",
     "en": "to like",
-    "rank": 97,
+    "rank": 96,
     "participle": "gostado",
     "gerund": "gostando",
     "forms": {
@@ -11221,7 +11098,7 @@
   {
     "lemma": "resolver",
     "en": "to solve; to resolve (to find an answer or solution)",
-    "rank": 98,
+    "rank": 97,
     "participle": "resolvido",
     "gerund": "resolvendo",
     "forms": {
@@ -11327,7 +11204,7 @@
   {
     "lemma": "sentar",
     "en": "to seat",
-    "rank": 99,
+    "rank": 98,
     "participle": "sentado",
     "gerund": "sentando",
     "forms": {
@@ -11433,7 +11310,7 @@
   {
     "lemma": "lidar",
     "en": "to deal with, to handle",
-    "rank": 100,
+    "rank": 99,
     "participle": "lidado",
     "gerund": "lidando",
     "forms": {
@@ -11539,7 +11416,7 @@
   {
     "lemma": "cantar",
     "en": "to sing (express sounds musically through the voice)",
-    "rank": 101,
+    "rank": 100,
     "participle": "cantado",
     "gerund": "cantando",
     "forms": {
@@ -11645,7 +11522,7 @@
   {
     "lemma": "confiar",
     "en": "to confide, entrust",
-    "rank": 102,
+    "rank": 101,
     "participle": "confiado",
     "gerund": "confiando",
     "forms": {
@@ -11751,7 +11628,7 @@
   {
     "lemma": "aceitar",
     "en": "to accept",
-    "rank": 103,
+    "rank": 102,
     "participle": "aceito|aceitado",
     "gerund": "aceitando",
     "forms": {
@@ -11869,7 +11746,7 @@
   {
     "lemma": "dançar",
     "en": "to dance",
-    "rank": 104,
+    "rank": 103,
     "participle": "dançado",
     "gerund": "dançando",
     "forms": {
@@ -11985,7 +11862,7 @@
   {
     "lemma": "vender",
     "en": "to sell",
-    "rank": 105,
+    "rank": 104,
     "participle": "vendido",
     "gerund": "vendendo",
     "forms": {
@@ -12091,7 +11968,7 @@
   {
     "lemma": "receber",
     "en": "to get; to receive",
-    "rank": 106,
+    "rank": 105,
     "participle": "recebido",
     "gerund": "recebendo",
     "forms": {
@@ -12197,7 +12074,7 @@
   {
     "lemma": "escolher",
     "en": "to choose",
-    "rank": 107,
+    "rank": 106,
     "participle": "escolhido",
     "gerund": "escolhendo",
     "forms": {
@@ -12303,7 +12180,7 @@
   {
     "lemma": "tornar",
     "en": "to make (to cause to be)",
-    "rank": 108,
+    "rank": 107,
     "participle": "tornado",
     "gerund": "tornando",
     "forms": {
@@ -12409,7 +12286,7 @@
   {
     "lemma": "preocupar",
     "en": "to concern, worry (to cause concern to, cause unrest)",
-    "rank": 109,
+    "rank": 108,
     "participle": "preocupado",
     "gerund": "preocupando",
     "forms": {
@@ -12515,7 +12392,7 @@
   {
     "lemma": "atirar",
     "en": "to throw",
-    "rank": 110,
+    "rank": 109,
     "participle": "atirado",
     "gerund": "atirando",
     "forms": {
@@ -12621,7 +12498,7 @@
   {
     "lemma": "esconder",
     "en": "to hide",
-    "rank": 111,
+    "rank": 110,
     "participle": "escondido",
     "gerund": "escondendo",
     "forms": {
@@ -12727,7 +12604,7 @@
   {
     "lemma": "criar",
     "en": "to create, to put into existence",
-    "rank": 112,
+    "rank": 111,
     "participle": "criado",
     "gerund": "criando",
     "forms": {
@@ -12833,7 +12710,7 @@
   {
     "lemma": "roubar",
     "en": "to steal (to take illegally or without permission)",
-    "rank": 113,
+    "rank": 112,
     "participle": "roubado",
     "gerund": "roubando",
     "forms": {
@@ -12939,7 +12816,7 @@
   {
     "lemma": "funcionar",
     "en": "to work; to function",
-    "rank": 114,
+    "rank": 113,
     "participle": "funcionado",
     "gerund": "funcionando",
     "forms": {
@@ -13045,7 +12922,7 @@
   {
     "lemma": "imaginar",
     "en": "to imagine (all senses)",
-    "rank": 115,
+    "rank": 114,
     "participle": "imaginado",
     "gerund": "imaginando",
     "forms": {
@@ -13151,7 +13028,7 @@
   {
     "lemma": "aparecer",
     "en": "to appear",
-    "rank": 116,
+    "rank": 115,
     "participle": "aparecido",
     "gerund": "aparecendo",
     "forms": {
@@ -13267,7 +13144,7 @@
   {
     "lemma": "evitar",
     "en": "to avoid",
-    "rank": 117,
+    "rank": 116,
     "participle": "evitado",
     "gerund": "evitando",
     "forms": {
@@ -13373,14 +13250,14 @@
   {
     "lemma": "destruir",
     "en": "to ruin, devastate (proceed with the destruction of, cause the destruction of)",
-    "rank": 118,
+    "rank": 117,
     "participle": "destruído",
     "gerund": "destruindo",
     "forms": {
       "pres": {
         "eu": "destruo",
-        "tu": "destruis",
-        "ele": "destrui",
+        "tu": "destróis",
+        "ele": "destrói",
         "nos": "destruímos",
         "eles": "destruem"
       },
@@ -13510,7 +13387,7 @@
   {
     "lemma": "subir",
     "en": "to ascend, to go up",
-    "rank": 119,
+    "rank": 118,
     "participle": "subido",
     "gerund": "subindo",
     "forms": {
@@ -13620,7 +13497,7 @@
   {
     "lemma": "brincar",
     "en": "to play, as in child's play or \"playing around\"",
-    "rank": 120,
+    "rank": 119,
     "participle": "brincado",
     "gerund": "brincando",
     "forms": {
@@ -13736,7 +13613,7 @@
   {
     "lemma": "limpar",
     "en": "to clean (to remove dirt from a place or object)",
-    "rank": 121,
+    "rank": 120,
     "participle": "limpo|limpado",
     "gerund": "limpando",
     "forms": {
@@ -13854,7 +13731,7 @@
   {
     "lemma": "amar",
     "en": "to love, to have great affection for",
-    "rank": 122,
+    "rank": 121,
     "participle": "amado",
     "gerund": "amando",
     "forms": {
@@ -13960,7 +13837,7 @@
   {
     "lemma": "cortar",
     "en": "to cut (to split using a sharp instrument)",
-    "rank": 123,
+    "rank": 122,
     "participle": "cortado",
     "gerund": "cortando",
     "forms": {
@@ -14066,7 +13943,7 @@
   {
     "lemma": "responder",
     "en": "to answer; to reply (to give a written or spoken response)",
-    "rank": 124,
+    "rank": 123,
     "participle": "respondido",
     "gerund": "respondendo",
     "forms": {
@@ -14172,7 +14049,7 @@
   {
     "lemma": "dirigir",
     "en": "to drive (a vehicle)",
-    "rank": 125,
+    "rank": 124,
     "participle": "dirigido",
     "gerund": "dirigindo",
     "forms": {
@@ -14288,7 +14165,7 @@
   {
     "lemma": "preparar",
     "en": "to prepare, to get ready (to make ready for a specific future purpose)",
-    "rank": 126,
+    "rank": 125,
     "participle": "preparado",
     "gerund": "preparando",
     "forms": {
@@ -14394,7 +14271,7 @@
   {
     "lemma": "entregar",
     "en": "to deliver (to transport something to a destination)",
-    "rank": 127,
+    "rank": 126,
     "participle": "entregue|entregado",
     "gerund": "entregando",
     "forms": {
@@ -14521,7 +14398,7 @@
   {
     "lemma": "pôr",
     "en": "to put; to place",
-    "rank": 128,
+    "rank": 127,
     "participle": "posto",
     "gerund": "pondo",
     "forms": {
@@ -14697,7 +14574,7 @@
   {
     "lemma": "assistir",
     "en": "to assist (to help, especially in a secondary role)",
-    "rank": 129,
+    "rank": 128,
     "participle": "assistido",
     "gerund": "assistindo",
     "forms": {
@@ -14803,7 +14680,7 @@
   {
     "lemma": "agradecer",
     "en": "to thank",
-    "rank": 130,
+    "rank": 129,
     "participle": "agradecido",
     "gerund": "agradecendo",
     "forms": {
@@ -14919,7 +14796,7 @@
   {
     "lemma": "virar",
     "en": "to turn (to change direction)",
-    "rank": 131,
+    "rank": 130,
     "participle": "virado",
     "gerund": "virando",
     "forms": {
@@ -15025,7 +14902,7 @@
   {
     "lemma": "escapar",
     "en": "to escape (get free)",
-    "rank": 132,
+    "rank": 131,
     "participle": "escapado",
     "gerund": "escapando",
     "forms": {
@@ -15131,7 +15008,7 @@
   {
     "lemma": "apresentar",
     "en": "to introduce (to make multiple people become acquainted with one another)",
-    "rank": 133,
+    "rank": 132,
     "participle": "apresentado",
     "gerund": "apresentando",
     "forms": {
@@ -15237,7 +15114,7 @@
   {
     "lemma": "chorar",
     "en": "to cry; to weep (to shed tears from the eyes)",
-    "rank": 134,
+    "rank": 133,
     "participle": "chorado",
     "gerund": "chorando",
     "forms": {
@@ -15343,7 +15220,7 @@
   {
     "lemma": "vencer",
     "en": "to win",
-    "rank": 135,
+    "rank": 134,
     "participle": "vencido",
     "gerund": "vencendo",
     "forms": {
@@ -15459,7 +15336,7 @@
   {
     "lemma": "decidir",
     "en": "to decide",
-    "rank": 136,
+    "rank": 135,
     "participle": "decidido",
     "gerund": "decidindo",
     "forms": {
@@ -15565,7 +15442,7 @@
   {
     "lemma": "arrumar",
     "en": "to fix",
-    "rank": 137,
+    "rank": 136,
     "participle": "arrumado",
     "gerund": "arrumando",
     "forms": {
@@ -15671,7 +15548,7 @@
   {
     "lemma": "quebrar",
     "en": "to break (end up or cause to end up in two or more pieces that cannot easily be reassembled)",
-    "rank": 138,
+    "rank": 137,
     "participle": "quebrado",
     "gerund": "quebrando",
     "forms": {
@@ -15777,7 +15654,7 @@
   {
     "lemma": "discutir",
     "en": "to discuss",
-    "rank": 139,
+    "rank": 138,
     "participle": "discutido",
     "gerund": "discutindo",
     "forms": {
@@ -15883,7 +15760,7 @@
   {
     "lemma": "desistir",
     "en": "to desist",
-    "rank": 140,
+    "rank": 139,
     "participle": "desistido",
     "gerund": "desistindo",
     "forms": {
@@ -15989,7 +15866,7 @@
   {
     "lemma": "levantar",
     "en": "to stand up; to get up (to rise from a lying, sitting or fallen position)",
-    "rank": 141,
+    "rank": 140,
     "participle": "levantado",
     "gerund": "levantando",
     "forms": {
@@ -16095,7 +15972,7 @@
   {
     "lemma": "machucar",
     "en": "to hurt (to cause physical pain)",
-    "rank": 142,
+    "rank": 141,
     "participle": "machucado",
     "gerund": "machucando",
     "forms": {
@@ -16211,7 +16088,7 @@
   {
     "lemma": "dever",
     "en": "should (indicates that an action is considered by the speaker to be obligatory)",
-    "rank": 143,
+    "rank": 142,
     "participle": "devido",
     "gerund": "devendo",
     "forms": {
@@ -16317,7 +16194,7 @@
   {
     "lemma": "livrar",
     "en": "to save",
-    "rank": 144,
+    "rank": 143,
     "participle": "livrado",
     "gerund": "livrando",
     "forms": {
@@ -16423,7 +16300,7 @@
   {
     "lemma": "sobreviver",
     "en": "survive",
-    "rank": 145,
+    "rank": 144,
     "participle": "sobrevivido",
     "gerund": "sobrevivendo",
     "forms": {
@@ -16529,7 +16406,7 @@
   {
     "lemma": "fechar",
     "en": "to close",
-    "rank": 146,
+    "rank": 145,
     "participle": "fechado",
     "gerund": "fechando",
     "forms": {
@@ -16635,7 +16512,7 @@
   {
     "lemma": "descansar",
     "en": "to rest",
-    "rank": 147,
+    "rank": 146,
     "participle": "descansado",
     "gerund": "descansando",
     "forms": {
@@ -16741,7 +16618,7 @@
   {
     "lemma": "trocar",
     "en": "to replace, to substitute (to remove something and put a new one in its place)",
-    "rank": 148,
+    "rank": 147,
     "participle": "trocado",
     "gerund": "trocando",
     "forms": {
@@ -16857,7 +16734,7 @@
   {
     "lemma": "obter",
     "en": "to obtain, get",
-    "rank": 149,
+    "rank": 148,
     "participle": "obtido",
     "gerund": "obtendo",
     "forms": {
@@ -16996,7 +16873,7 @@
   {
     "lemma": "controlar",
     "en": "to control (to determine the behavior of)",
-    "rank": 150,
+    "rank": 149,
     "participle": "controlado",
     "gerund": "controlando",
     "forms": {
@@ -17095,6 +16972,112 @@
         "ele": "controlar",
         "nos": "controlarmos",
         "eles": "controlarem"
+      }
+    },
+    "irregular": []
+  },
+  {
+    "lemma": "acordar",
+    "en": "to awake; to wake up (to stop sleeping)",
+    "rank": 150,
+    "participle": "acordado",
+    "gerund": "acordando",
+    "forms": {
+      "pres": {
+        "eu": "acordo",
+        "tu": "acordas",
+        "ele": "acorda",
+        "nos": "acordamos",
+        "eles": "acordam"
+      },
+      "perf": {
+        "eu": "acordei",
+        "tu": "acordaste",
+        "ele": "acordou",
+        "nos": "acordamos",
+        "eles": "acordaram"
+      },
+      "imperf": {
+        "eu": "acordava",
+        "tu": "acordavas",
+        "ele": "acordava",
+        "nos": "acordávamos",
+        "eles": "acordavam"
+      },
+      "mqp_comp": {
+        "eu": "tinha acordado",
+        "tu": "tinhas acordado",
+        "ele": "tinha acordado",
+        "nos": "tínhamos acordado",
+        "eles": "tinham acordado"
+      },
+      "fut_ir": {
+        "eu": "vou acordar",
+        "tu": "vais acordar",
+        "ele": "vai acordar",
+        "nos": "vamos acordar",
+        "eles": "vão acordar"
+      },
+      "fut": {
+        "eu": "acordarei",
+        "tu": "acordarás",
+        "ele": "acordará",
+        "nos": "acordaremos",
+        "eles": "acordarão"
+      },
+      "cond": {
+        "eu": "acordaria",
+        "tu": "acordarias",
+        "ele": "acordaria",
+        "nos": "acordaríamos",
+        "eles": "acordariam"
+      },
+      "prog": {
+        "eu": "estou acordando",
+        "tu": "estás acordando",
+        "ele": "está acordando",
+        "nos": "estamos acordando",
+        "eles": "estão acordando"
+      },
+      "perf_comp": {
+        "eu": "tenho acordado",
+        "tu": "tens acordado",
+        "ele": "tem acordado",
+        "nos": "temos acordado",
+        "eles": "têm acordado"
+      },
+      "imp": {
+        "ele": "acorde",
+        "nos": "acordemos",
+        "eles": "acordem"
+      },
+      "subj_pres": {
+        "eu": "acorde",
+        "tu": "acordes",
+        "ele": "acorde",
+        "nos": "acordemos",
+        "eles": "acordem"
+      },
+      "subj_imperf": {
+        "eu": "acordasse",
+        "tu": "acordasses",
+        "ele": "acordasse",
+        "nos": "acordássemos",
+        "eles": "acordassem"
+      },
+      "subj_fut": {
+        "eu": "acordar",
+        "tu": "acordares",
+        "ele": "acordar",
+        "nos": "acordarmos",
+        "eles": "acordarem"
+      },
+      "inf_pess": {
+        "eu": "acordar",
+        "tu": "acordares",
+        "ele": "acordar",
+        "nos": "acordarmos",
+        "eles": "acordarem"
       }
     },
     "irregular": []

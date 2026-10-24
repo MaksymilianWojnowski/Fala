@@ -1,4 +1,4 @@
-from pipeline.build_verbs import apply_review, diff_rows, select_verbs, wiki_forms
+from pipeline.build_verbs import apply_review, diff_rows, merge_review, select_verbs, wiki_forms
 from pipeline.verbs import conjugate
 
 
@@ -30,3 +30,19 @@ def test_invalid_field_always_gets_a_row():
     verb = {'lemma': 'pagar', 'participle': 'pago', 'invalid': ['perf.nos'], 'forms': {'perf': {'nos': 'pag)'}}}
     assert diff_rows('pagar', verb, {}, set()) == [
         {'lemma': 'pagar', 'field': 'perf.nos', 'ours': 'pag)', 'wiktionary': '', 'chosen': ''}]
+
+
+def test_select_verbs_skips_words_without_counting_them():
+    assert select_verbs(['ser 90', 'prazer 80', 'fazer 70'], 2, [], {'prazer'}) == ['ser', 'fazer']
+
+
+def test_manual_row_for_field_without_diff_is_applied():
+    manual = {'lemma': 'destruir', 'field': 'pres.ele', 'ours': 'destrui', 'wiktionary': 'destrói|destrui', 'chosen': 'destrói'}
+    assert diff_rows('destruir', conjugate('destruir'), {}, set()) == []  # the diff does not regenerate it
+    rows = merge_review([], [manual], {'destruir'})
+    assert rows == [manual]
+    assert apply_review(conjugate('destruir'), rows)['forms']['pres']['ele'] == 'destrói'
+
+
+def test_select_verbs_skips_words_verbecc_cannot_conjugate():
+    assert select_verbs(['der 100', 'ser 90'], 1, []) == ['ser']

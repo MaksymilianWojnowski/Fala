@@ -60,6 +60,8 @@ roubar,perf.nos,roub,roubamos|roubámos,roubamos
 funcionar,perf.nos,funcion,funcionamos|funcionámos,funcionamos
 imaginar,perf.nos,imagin,imaginamos|imaginámos,imaginamos
 evitar,perf.nos,evit,evitamos|evitámos,evitamos
+destruir,pres.ele,destrui,destrói|destrui,destrói
+destruir,pres.tu,destruis,destróis|destruis,destróis
 brincar,perf.nos,brin,brincamos|brincámos,brincamos
 limpar,perf.nos,limp,limpamos|limpámos,limpamos
 limpar,participle,limpo,limpado|limpo,limpo|limpado
@@ -79,5 +81,6 @@ fechar,perf.nos,fech,fechamos|fechámos,fechamos
 descansar,perf.nos,descans,descansamos|descansámos,descansamos
 trocar,perf.nos,tro),trocamos|trocámos,trocamos
 controlar,perf.nos,control,controlamos|controlámos,controlamos
+acordar,perf.nos,acord,acordamos|acordámos,acordamos
 gastar,perf.nos,gast,gastamos|gastámos,gastamos
 gastar,participle,gasto,gastado|gasto,gasto|gastado
