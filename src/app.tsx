@@ -81,6 +81,10 @@ export function App() {
   // key remounts Session for a new run; override holds the misses for "Review the misses now".
   const [run, setRun] = useState<{ key: number; override?: Item[] }>({ key: 0 });
   const restart = (override?: Item[]) => setRun((r) => ({ key: r.key + 1, override }));
+  // Entry points that are plain hash changes (Learn, Path) never call restart, so drop the misses once the session route is left.
+  useEffect(() => {
+    if (route.name !== 'session') setRun((r) => (r.override ? { ...r, override: undefined } : r));
+  }, [route.name]);
 
   useEffect(() => {
     void loadVerbs().then(setVerbs);

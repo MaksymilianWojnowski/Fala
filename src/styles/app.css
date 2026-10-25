@@ -196,7 +196,14 @@
 .irregular__row:last-child { border-bottom: 0; }
 .irregular__verb { font-size: 14px; font-weight: 600; }
 .irregular__forms { font-family: 'Newsreader', Georgia, serif; font-size: 17px; }
-.more-link { font-size: 14px; font-weight: 500; color: var(--accent); text-decoration: none; }
+.more-link {
+  display: inline-flex; align-items: center; min-height: 44px;
+  font-size: 14px; font-weight: 500; color: var(--accent); text-decoration: none;
+}
+.examples { display: flex; flex-direction: column; }
+.example { display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.example:last-child { border-bottom: 0; }
+.example__pt { font-size: 19px; }
 .learn__foot { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }
 .learn__actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .learn__test { flex-direction: column; gap: 0; line-height: 1.2; }

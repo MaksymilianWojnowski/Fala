@@ -149,6 +149,18 @@ export function Learn({ store, verbs, unitId }: Props) {
         </section>
       )}
 
+      <section className="stack">
+        <h2 className="eyebrow">Examples</h2>
+        <div className="card examples">
+          {learn.examples.map((ex) => (
+            <div key={ex.pt} className="example">
+              <span className="pt example__pt" lang="pt-BR">{ex.pt}</span>
+              <span className="muted small">{ex.en}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <footer className="learn__foot">
         {startFailed && (
           <p role="alert" className="notice"><Icon name="alert" /> Couldn't start. Try again.</p>

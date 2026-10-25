@@ -60,9 +60,10 @@ export function Session({ store, verbs, route, override, onReview, onRestart }: 
       const [cards, units, settings] = await Promise.all([store.cards(), store.units(), store.settings()]);
       const now = Date.now();
       const input: BuildInput = { cards, units, settings, now, verbs: verbs.list, sentences: [], rng: Math.random, hasVoice: false };
-      const items = override ?? (testUnit
+      // A placement test ignores any leftover miss list from an earlier review run.
+      const items = testUnit
         ? placementItems(testUnit, verbs.list, settings, Math.random)
-        : route.verb ? verbSession(route.verb, input) : buildSession(input));
+        : override ?? (route.verb ? verbSession(route.verb, input) : buildSession(input));
       if (!live) return;
       const first = startSession(items, now, settings.minutes, testUnit ? 'test' : 'review');
       latest.current = first;
