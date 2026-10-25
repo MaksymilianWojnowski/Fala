@@ -2,13 +2,17 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from dataclasses import dataclass
 
 PT_PT_WORDS = {'autocarro', 'comboio', 'telemóvel', 'pequeno-almoço', 'rapariga', 'facto', 'equipa', 'ecrã',
                'frigorífico'}
 PT_PT_PHRASES = ['casa de banho']
-PT_PT_RE = re.compile(r'\b(?:' + '|'.join(re.escape(w) for w in sorted(PT_PT_WORDS)) + r')\b')
-ESTAR_A_INF = re.compile(r'\best(?:ou|ás|á|amos|ão|ava|avam|ávamos|ar)\s+a\s+\w+r\b')
+PT_PT_RE = re.compile(r'\b(?:' + '|'.join(re.escape(w) for w in sorted(PT_PT_WORDS | {'telemóveis'}))
+                      + r')(?:s|es)?\b')
+INF = r'(?:\w+r(?:-\w+)?|\w+ê-\w+)'  # fazer, pôr, dar-lhe, fazê-lo
+ESTAR_A_INF = re.compile(r'\best(?:ou|ás|á|amos|ão|ava\w*|ávamos|iv\w*|eve\w*|ej\w*|ar\w*|ará|ando|aria\w*)'
+                         r'\s+a\s+' + INF + r'\b')
 VOS = re.compile(r'\bvós\b')
 PT_PT_PAST_1PL = re.compile(r'\w+ámos\b')
 SLOT_BY_PERSON_NUMBER = {('1', 'Sing'): 'eu', ('2', 'Sing'): 'tu', ('3', 'Sing'): 'ele', ('1', 'Plur'): 'nos',
@@ -18,8 +22,12 @@ COMPOUND = {('ter', 'Imp', 'Part'): 'mqp_comp', ('ter', 'Pres', 'Part'): 'perf_c
             ('estar', 'Pres', 'Ger'): 'prog', ('ir', 'Pres', 'Inf'): 'fut_ir'}
 
 
+def nfc(text: str) -> str:
+    return unicodedata.normalize('NFC', text)
+
+
 def is_br(text: str) -> bool:
-    t = text.lower()
+    t = nfc(text).lower()
     if PT_PT_RE.search(t) or any(p in t for p in PT_PT_PHRASES):
         return False
     return not (ESTAR_A_INF.search(t) or VOS.search(t) or PT_PT_PAST_1PL.search(t))

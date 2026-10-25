@@ -1,5 +1,6 @@
 import { expect, test } from 'vitest';
 import verbs from './verbs.json';
+import sentences from './sentences.json';
 import { REQUIRED_SLOTS, TENSES, alternates } from '../lib/names';
 import { UNITS } from '../content/units';
 import { LEARN } from '../content/learn';
@@ -73,4 +74,19 @@ test('contrast counts', () => {
   expect(CONTRAST.filter(s => s.gap.tense === 'subj_pres').length).toBeGreaterThanOrEqual(10);
   expect(CONTRAST.filter(s => s.gap.tense === 'subj_imperf').length).toBeGreaterThanOrEqual(10);
   expect(CONTRAST.filter(s => s.gap.tense === 'subj_fut').length).toBeGreaterThanOrEqual(10);
+});
+
+test('every gap matches its table cell', () => {
+  for (const s of sentences) {
+    expect(s.id).toBeGreaterThan(0);
+    expect(s.en).toBeTruthy();
+    expect(s.gap.slot).not.toBe('tu');
+    const cell = (byLemma.get(s.gap.lemma)!.forms as any)[s.gap.tense][s.gap.slot];
+    expect(alternates(cell), s.pt).toContain(s.pt.slice(s.gap.start, s.gap.end).toLowerCase());
+  }
+});
+
+test('core tenses have enough sentences', () => {
+  for (const t of ['pres', 'perf', 'imperf'])
+    expect(sentences.filter(s => s.gap.tense === t).length, t).toBeGreaterThanOrEqual(300);
 });

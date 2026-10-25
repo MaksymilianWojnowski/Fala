@@ -1,4 +1,5 @@
 """Download-once cache for the verb build. Everything lands in pipeline/.cache."""
+import http.client
 import ssl
 import time
 import urllib.error
@@ -28,7 +29,7 @@ def _get(url: str) -> bytes:
             if e.code == 404:
                 raise
             err = e
-        except (TimeoutError, urllib.error.URLError) as e:
+        except (TimeoutError, urllib.error.URLError, http.client.HTTPException) as e:  # IncompleteRead on big files
             err = e
         if attempt < len(BACKOFF):
             time.sleep(BACKOFF[attempt])

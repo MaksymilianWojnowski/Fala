@@ -111,3 +111,28 @@ def test_tu_rejected():
                                                 'VerbForm': 'Fin'}),
                 T(2, 'muito', 'muito', 'ADV', {}))
     assert find_gap(toks, V) is None
+
+
+def test_r23_plural_pt_pt_words():
+    assert not is_br('As raparigas saíram.') and not is_br('Os telemóveis tocaram.')
+    assert not is_br('Os autocarros chegaram.') and is_br('As meninas saíram.')
+
+
+def test_r23_all_estar_forms_with_infinitive():
+    assert not is_br('Ela esteve a trabalhar.') and not is_br('Ela estaria a trabalhar.')
+    assert not is_br('Ela estivemos a trabalhar.') and not is_br('Ela estará a trabalhar.')
+    assert not is_br('Eles estejam a trabalhar.') and not is_br('Ela está a fazê-lo.')
+    assert is_br('Ela esteve trabalhando.')
+
+
+def test_r23_nfc_normalized():
+    import unicodedata
+    assert not is_br(unicodedata.normalize('NFD', 'O ecrã partiu.'))
+    assert not is_br(unicodedata.normalize('NFD', 'Os telemóveis tocaram.'))
+
+
+def test_pick_caps_shortest_per_lemma_tense():
+    from pipeline.build_sentences import pick
+    s = [{'id': i, 'pt': 'x' * n, 'gap': {'lemma': 'comer', 'tense': 'pres'}} for i, n in [(1, 30), (2, 10), (3, 20)]]
+    s.append({'id': 4, 'pt': 'x' * 5, 'gap': {'lemma': 'falar', 'tense': 'pres'}})
+    assert [x['id'] for x in pick(s, 2)] == [2, 3, 4]
