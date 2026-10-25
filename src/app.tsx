@@ -1,5 +1,10 @@
-import { useSyncExternalStore, type ReactNode } from 'react';
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { parseRoute, type Route } from './lib/route';
+import { loadVerbs, type VerbData } from './lib/data';
+import { idbStore } from './lib/store';
+import type { Item } from './lib/types';
+import { Session } from './screens/Session';
+import { Today } from './screens/Today';
 
 type TabName = 'today' | 'path' | 'progress' | 'verbs';
 
@@ -69,12 +74,25 @@ export function App() {
   const hash = useSyncExternalStore(subscribe, getHash);
   const route = parseRoute(hash);
   const active = activeTab(route);
+  const [store] = useState(idbStore);
+  const [verbs, setVerbs] = useState<VerbData>();
+  // key remounts Session for a new run; override holds the misses for "Review the misses now".
+  const [run, setRun] = useState<{ key: number; override?: Item[] }>({ key: 0 });
+  const restart = (override?: Item[]) => setRun((r) => ({ key: r.key + 1, override }));
+
+  useEffect(() => {
+    void loadVerbs().then(setVerbs);
+  }, []);
+
+  let screen: ReactNode = <h1>{route.name}</h1>;
+  if (verbs && route.name === 'today') screen = <Today store={store} verbs={verbs} onStart={() => restart()} />;
+  if (verbs && route.name === 'session') {
+    screen = <Session key={run.key} store={store} verbs={verbs} route={route} override={run.override} onReview={restart} />;
+  }
 
   return (
     <>
-      <main>
-        <h1>{route.name}</h1>
-      </main>
+      <main>{screen}</main>
       {route.name !== 'session' && (
         <nav className="tabbar" aria-label="Main">
           {TABS.map((t) => (
