@@ -4,9 +4,10 @@ import type { CardState, Prompt, Rating } from './types';
 
 export const f = fsrs(generatorParameters({ request_retention: 0.9, enable_fuzz: true }));
 
-// "Today" rolls over at 04:00 local time, so shift back 4h before taking the date.
+// "Today" rolls over at 04:00 wall-clock time; subtracting 4h of absolute time is off by one hour on DST days.
 export function dayKey(t: Date | number): string {
-  const d = new Date(+t - 4 * 3600_000);
+  const d = new Date(+t);
+  if (d.getHours() < 4) d.setDate(d.getDate() - 1);
   const p = (n: number) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
