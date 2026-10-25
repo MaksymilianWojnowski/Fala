@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import type { CardState, Sentence, Settings, UnitState, Verb } from './types';
 import {
-  applyPlacement, buildSession, dayKey, hintLevel, newCandidates, newCard, pickPrompt, rate, unitVerbs, verbSession,
+  applyPlacement, buildSession, dayKey, hintLevel, newCandidates, newCard, pickPrompt, placementItems, rate, unitVerbs, verbSession,
   type BuildInput,
 } from './scheduler';
 import { DEFAULT_SETTINGS } from './store';
@@ -170,3 +170,25 @@ test('verbSession', () => {
 
 test('hintLevel', () => expect([hintLevel(1, true), hintLevel(5, true), hintLevel(30, true), hintLevel(30, false)])
   .toEqual(['tense', 'context', 'audio', 'context']));
+
+test('placementItems draws 6 distinct lemmas from the first 30 unitVerbs, no tu when off', () => {
+  const u = unit('perf');
+  const pool = unitVerbs(u, VERBS).slice(0, 30).map((v) => v.lemma);
+  for (let seed = 1; seed <= 50; seed++) {
+    const items = placementItems(u, VERBS, { ...DEFAULT_SETTINGS, tu: false }, mulberry32(seed));
+    expect(items.length).toBe(6);
+    expect(items.every((x) => x.kind === 'conjugate')).toBe(true);
+    const lemmas = items.map((x) => (x.kind === 'conjugate' ? x.lemma : ''));
+    expect(new Set(lemmas).size).toBe(6);
+    for (const l of lemmas) expect(pool).toContain(l);
+    expect(items.every((x) => x.kind !== 'conjugate' || x.prompt !== 'tu')).toBe(true);
+  }
+});
+
+test('placement cards do not count toward the new-card cap', () => {
+  const pass = applyPlacement(unit('perf'), 5, input({ perf: 'learning' }));
+  expect(pass.cards.every((c) => c.introduced === '')).toBe(true);
+  const cards = new Map([...input({ perf: 'learning', imperf: 'learning' }).cards, ...pass.cards.map((c) => [c.id, c] as [string, CardState])]);
+  const i = input({ perf: 'learning', imperf: 'learning' }, {}, { cards });
+  expect(buildSession(i).length).toBe(DEFAULT_SETTINGS.newPerDay);
+});

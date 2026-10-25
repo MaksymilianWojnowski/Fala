@@ -140,9 +140,14 @@ export function verbSession(lemma: string, i: BuildInput): Item[] {
 
 export function placementItems(unit: Unit, verbs: Verb[], settings: Settings, rng: () => number): Item[] {
   const pool = unitVerbs(unit, verbs).slice(0, 30);
+  // Partial Fisher-Yates: the first 6 slots become 6 distinct verbs.
+  for (let k = 0; k < 6; k++) {
+    const j = k + Math.floor(rng() * (pool.length - k));
+    [pool[k], pool[j]] = [pool[j], pool[k]];
+  }
   const pick = <T,>(xs: T[]): T => xs[Math.floor(rng() * xs.length)];
-  return Array.from({ length: 6 }, () => {
-    const lemma = pick(pool).lemma;
+  return pool.slice(0, 6).map((verb) => {
+    const lemma = verb.lemma;
     const tense = pick(unit.tenses);
     const prompt = pickPrompt(undefined, promptsFor(tense, settings.tu), rng);
     return { kind: 'conjugate' as const, cardId: `c:${lemma}:${tense}`, lemma, tense, prompt, pronoun: pronounFor(prompt, rng) };
@@ -156,8 +161,8 @@ export function applyPlacement(unit: Unit, correct: number, i: BuildInput): { un
     .filter((id) => !i.cards.has(id))
     .map((id) => {
       const c = rate(newCard(id, i.now), 3, i.now);
-      // Spread first reviews over two weeks.
-      return { ...c, fsrs: { ...c.fsrs, due: new Date(i.now + (1 + Math.floor(i.rng() * 14)) * DAY) } };
+      // Spread first reviews over two weeks. Placement cards are known, not new, so they don't use today's new-card cap.
+      return { ...c, introduced: '', fsrs: { ...c.fsrs, due: new Date(i.now + (1 + Math.floor(i.rng() * 14)) * DAY) } };
     });
   return { unit: { id: unit.id, status: 'known', updatedAt: i.now }, cards };
 }
