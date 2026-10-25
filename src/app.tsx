@@ -92,7 +92,7 @@ export function App() {
 
   return (
     <>
-      <main>{screen}</main>
+      <main className={route.name === 'session' ? 'main--bare' : undefined}>{screen}</main>
       {route.name !== 'session' && (
         <nav className="tabbar" aria-label="Main">
           {TABS.map((t) => (

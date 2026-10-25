@@ -73,7 +73,10 @@
 .bar__delta { height: 100%; background: var(--accent); opacity: 0.4; }
 
 /* Session */
-.session { max-width: 640px; margin: 0 auto; padding: 0 16px; min-height: 100vh; display: flex; flex-direction: column; }
+.session { max-width: 640px; margin: 0 auto; padding: 0 16px; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+/* Session has no tab bar, so drop main's bottom padding that reserves room for it. */
+.main--bare { padding-bottom: 0; }
+.notice { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; color: var(--warn); }
 .session__top { display: flex; align-items: center; gap: 12px; padding: 16px 0 8px; }
 .session__body { flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 16px 0; }
 .session__foot {

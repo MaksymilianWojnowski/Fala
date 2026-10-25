@@ -20,8 +20,9 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   );
 }
 
-export function Chip({ children, accent, lang }: { children: string; accent?: boolean; lang?: string }) {
-  return <span className={accent ? 'chip chip--accent' : 'chip'} lang={lang}>{children}</span>;
+// Chips only carry Portuguese (tense names, pronouns), so they always get pt-BR and .pt.
+export function Chip({ children, accent }: { children: string; accent?: boolean }) {
+  return <span className={`pt chip${accent ? ' chip--accent' : ''}`} lang="pt-BR">{children}</span>;
 }
 
 // pct is the solid fill; delta is a lighter segment after it (both 0-100).

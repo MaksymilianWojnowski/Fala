@@ -8,7 +8,7 @@ import {
   commitAnswer, reduce, startSession, untilText,
   type SessionAction, type SessionContext, type SessionState,
 } from '../lib/session';
-import type { CardState, Item, Prompt, Settings, Store, Tense, Verb } from '../lib/types';
+import type { CardState, Item, Prompt, Rating, Settings, Store, Tense, Verb } from '../lib/types';
 import { Summary } from './Summary';
 import { AccentBar, Bar, Chip, Icon } from './ui';
 
@@ -18,6 +18,14 @@ const FEEDBACK = {
   accent: { icon: 'alert', text: 'Almost · check the accent' },
   wrong: { icon: 'miss', text: 'Not quite' },
 } as const;
+
+interface Pending {
+  item: Item;
+  rating: Rating;
+  input: string;
+  now: number;
+  busy?: boolean;
+}
 
 interface Props {
   store: Store;
@@ -32,9 +40,12 @@ export function Session({ store, verbs, route, override, onReview }: Props) {
   const [s, setS] = useState<SessionState>();
   const [value, setValue] = useState('');
   const [dueAt, setDueAt] = useState<number>();
+  const [saveFailed, setSaveFailed] = useState(false);
   // Refs let the window key handler and double-fired events read the latest state synchronously.
   const latest = useRef<SessionState | undefined>(undefined);
   const cfg = useRef<{ ctx: SessionContext; settings: Settings } | undefined>(undefined);
+  // Answers whose save failed; retried on Continue so none is lost silently.
+  const pending = useRef<Pending[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const caret = useRef<number | null>(null);
 
@@ -58,6 +69,23 @@ export function Session({ store, verbs, route, override, onReview }: Props) {
     };
   }, []);
 
+  function save(p: Pending): void {
+    if (p.busy) return;
+    p.busy = true;
+    commitAnswer(store, p.item, p.rating, p.input, p.now).then(
+      (c) => {
+        pending.current = pending.current.filter((x) => x !== p);
+        setSaveFailed(pending.current.length > 0);
+        setDueAt(+c.fsrs.due);
+      },
+      () => {
+        p.busy = false;
+        if (!pending.current.includes(p)) pending.current = [...pending.current, p];
+        setSaveFailed(true);
+      },
+    );
+  }
+
   function dispatch(a: SessionAction) {
     const prev = latest.current;
     if (!prev || !cfg.current) return;
@@ -68,9 +96,10 @@ export function Session({ store, verbs, route, override, onReview }: Props) {
     if (a.type === 'continue') {
       setValue('');
       setDueAt(undefined);
+      pending.current.forEach(save);
     }
     if (a.type === 'submit' && next.mode === 'review') {
-      void commitAnswer(store, prev.items[prev.index], next.last!.rating, a.input, a.now).then((c) => setDueAt(+c.fsrs.due));
+      save({ item: prev.items[prev.index], rating: next.last!.rating, input: a.input, now: a.now });
     }
   }
 
@@ -148,13 +177,17 @@ export function Session({ store, verbs, route, override, onReview }: Props) {
           {conj && (
             <div className="chips">
               <Chip accent>{TENSE_NAMES[conj.tense]}</Chip>
-              <Chip lang="pt-BR">{conj.pronoun}</Chip>
+              <Chip>{conj.pronoun}</Chip>
             </div>
           )}
         </div>
 
         <form className="answer-form" onSubmit={onSubmit}>
-          <label className="label" htmlFor="answer">{conj ? `${conj.pronoun} …` : 'Your answer'}</label>
+          {conj ? (
+            <label className="label pt" lang="pt-BR" htmlFor="answer">{`${conj.pronoun} …`}</label>
+          ) : (
+            <label className="label" htmlFor="answer">Your answer</label>
+          )}
           <input
             id="answer"
             ref={inputRef}
@@ -194,15 +227,24 @@ export function Session({ store, verbs, route, override, onReview }: Props) {
         )}
       </div>
 
-      {feedback && (
+      {(feedback || saveFailed) && (
         <footer className="session__foot">
-          <p className="rated">
-            Rated {RATING_NAME[feedback.rating]}
-            {dueAt !== undefined && ` · next review in ${untilText(dueAt - Date.now())}`}
-          </p>
-          <button type="button" className="btn btn--ink btn--block" onClick={() => dispatch({ type: 'continue', now: Date.now() })}>
-            Continue <kbd className="kbd">Enter</kbd>
-          </button>
+          {saveFailed && (
+            <p role="alert" className="notice">
+              <Icon name="alert" /> Couldn't save this answer. Retrying…
+            </p>
+          )}
+          {feedback && (
+            <>
+              <p className="rated">
+                Rated {RATING_NAME[feedback.rating]}
+                {dueAt !== undefined && ` · next review in ${untilText(dueAt - Date.now())}`}
+              </p>
+              <button type="button" className="btn btn--ink btn--block" onClick={() => dispatch({ type: 'continue', now: Date.now() })}>
+                Continue <kbd className="kbd">Enter</kbd>
+              </button>
+            </>
+          )}
         </footer>
       )}
     </div>
@@ -212,10 +254,12 @@ export function Session({ store, verbs, route, override, onReview }: Props) {
 function Paradigm({ verb, tense, asked, tu }: { verb: Verb; tense: Tense; asked: Prompt; tu: boolean }) {
   return (
     <div className="paradigm">
-      <div className="paradigm__title">{verb.lemma} · {TENSE_NAMES[tense]}</div>
+      <div className="paradigm__title">
+        <span className="pt" lang="pt-BR">{verb.lemma}</span> · <span className="pt" lang="pt-BR">{TENSE_NAMES[tense]}</span>
+      </div>
       {promptsFor(tense, tu).map((p) => (
         <div key={p} className={`paradigm__row${p === asked ? ' paradigm__row--asked' : ''}`}>
-          <span className="label" lang="pt-BR">{PROMPT_PRONOUNS[p].join(' · ')}</span>
+          <span className="label pt" lang="pt-BR">{PROMPT_PRONOUNS[p].join(' · ')}</span>
           <span className="pt paradigm__form" lang="pt-BR">{alternates(verb.forms[tense][PROMPT_SLOT[p]]!)[0]}</span>
         </div>
       ))}

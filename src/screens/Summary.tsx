@@ -5,6 +5,7 @@ import { alternates } from '../lib/names';
 import { expectedFor, untilText, type SessionState } from '../lib/session';
 import { endOfTomorrow, reviewsDueBy, streak, unitProgress } from '../lib/stats';
 import type { CardState, Item, ReviewLog, Settings, Store } from '../lib/types';
+import { plural } from '../lib/text';
 import { Bar, Icon } from './ui';
 
 interface Props {
@@ -55,7 +56,7 @@ export function Summary({ state, before, store, verbs, onReview }: Props) {
       <div className="stack center">
         <span className="hero-icon"><Icon name="check" size={48} /></span>
         <h1 className="display">Session done</h1>
-        <p className="muted">{answered} cards · {minutes} minutes</p>
+        <p className="muted">{plural(answered, 'card', 'cards')} · {plural(minutes, 'minute', 'minutes')}</p>
       </div>
 
       <div className="tiles">
@@ -88,12 +89,13 @@ export function Summary({ state, before, store, verbs, onReview }: Props) {
             {missed.map((item, i) => {
               const card = after.cards.get(item.cardId);
               const primary = alternates(expectedFor(item, verbs.byLemma))[0];
+              const conj = item.kind === 'conjugate';
               const secondary = item.kind === 'conjugate' ? `${item.lemma} · ${item.pronoun}` : item.sentence.en;
               return (
                 <div key={`${item.cardId}-${i}`} className="list__row">
                   <span className="row-baseline">
                     <span className="pt form" lang="pt-BR">{primary}</span>
-                    <span className="small muted" lang={item.kind === 'conjugate' ? 'pt-BR' : 'en'}>{secondary}</span>
+                    <span className={conj ? 'small muted pt' : 'small muted'} lang={conj ? 'pt-BR' : 'en'}>{secondary}</span>
                   </span>
                   {card && <span className="small muted">{untilText(+card.fsrs.due - Date.now())}</span>}
                 </div>
@@ -104,13 +106,13 @@ export function Summary({ state, before, store, verbs, onReview }: Props) {
       )}
 
       <p className="muted center">
-        {days > 0 && `${days} days in a row · `}Tomorrow: {tomorrow} reviews
+        {days > 0 && `${plural(days, 'day in a row', 'days in a row')} · `}Tomorrow: {plural(tomorrow, 'review', 'reviews')}
       </p>
 
       <footer className="stack">
         {missed.length > 0 && (
           <button type="button" className="btn btn--ghost btn--block" onClick={() => onReview(missed)}>
-            Review the {missed.length} misses now
+            Review the {plural(missed.length, 'miss', 'misses')} now
           </button>
         )}
         <a className="btn btn--primary btn--block" href="#/today">Done</a>
