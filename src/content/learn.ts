@@ -2,7 +2,7 @@ export interface Learn {
   summary: string;
   uses: { title: string; pt: string; en: string }[];
   signals: string[];
-  irregulars: { verb: string; forms: string }[];
+  irregulars: { verb: string; label?: string; forms: string }[];
   examples: { pt: string; en: string }[];
   note?: string;
   why: string;
@@ -14,9 +14,9 @@ export const LEARN: Record<string, Learn> = {
     uses: [
       { title: 'Habits and routines', pt: 'Eu trabalho de manhã.', en: 'I work in the morning.' },
       { title: 'Facts about someone', pt: 'Ela fala inglês e espanhol.', en: 'She speaks English and Spanish.' },
-      { title: 'Things happening now', pt: 'Eles comem agora na cozinha.', en: 'They are eating in the kitchen now.' },
+      { title: 'Things true right now', pt: 'Eu entendo o problema.', en: 'I understand the problem.' },
     ],
-    signals: ['sempre', 'todo dia', 'às vezes', 'geralmente', 'agora'],
+    signals: ['sempre', 'todo dia', 'às vezes', 'geralmente', 'normalmente'],
     irregulars: [],
     examples: [
       { pt: 'Eu bebo água todo dia.', en: 'I drink water every day.' },
@@ -103,7 +103,7 @@ export const LEARN: Record<string, Learn> = {
     ],
     signals: ['ontem', 'semana passada', 'no sábado', 'de repente', 'já'],
     irregulars: [
-      { verb: 'ser', forms: 'fui, foi, fomos, foram' },
+      { verb: 'ser', label: 'ser / ir', forms: 'fui, foi, fomos, foram' },
       { verb: 'ter', forms: 'tive, teve, tivemos, tiveram' },
       { verb: 'estar', forms: 'estive, esteve, estivemos, estiveram' },
       { verb: 'fazer', forms: 'fiz, fez, fizemos, fizeram' },
@@ -131,7 +131,7 @@ export const LEARN: Record<string, Learn> = {
     irregulars: [
       { verb: 'ser', forms: 'era, era, éramos, eram' },
       { verb: 'ter', forms: 'tinha, tinha, tínhamos, tinham' },
-      { verb: 'ir', forms: 'ia, ia, íamos, iam' },
+      { verb: 'vir', forms: 'vinha, vinha, vínhamos, vinham' },
       { verb: 'pôr', forms: 'punha, punha, púnhamos, punham' },
     ],
     examples: [
@@ -207,9 +207,10 @@ export const LEARN: Record<string, Learn> = {
       { pt: 'Espere aqui um minutinho.', en: 'Wait here a moment.' },
       { pt: 'Vá com calma, a estrada está molhada.', en: 'Take it easy, the road is wet.' },
       { pt: 'Façam o dever de casa antes do jantar.', en: 'Do your homework before dinner.' },
-      { pt: 'Tenha paciência, ela já vem.', en: "Be patient, she's coming." },
+      { pt: 'Não fale tão alto.', en: "Don't talk so loud." },
     ],
-    why: 'With você, nós and vocês, commands use the subjuntivo form, so the cells are ele, nos and eles.',
+    note: 'For a negative command use the subjuntivo: não fale, não coma. In casual speech you also hear fala! and come! for você.',
+    why: 'Commands use the subjuntivo forms: fale, falemos, falem.',
   },
 
   cond: {
@@ -223,7 +224,6 @@ export const LEARN: Record<string, Learn> = {
     irregulars: [
       { verb: 'fazer', forms: 'faria, faria, faríamos, fariam' },
       { verb: 'dizer', forms: 'diria, diria, diríamos, diriam' },
-      { verb: 'ter', forms: 'teria, teria, teríamos, teriam' },
       { verb: 'trazer', forms: 'traria, traria, traríamos, trariam' },
     ],
     examples: [
@@ -312,13 +312,13 @@ export const LEARN: Record<string, Learn> = {
   },
 
   perf_comp: {
-    summary: 'The present perfect: something that started in the past and still connects to now. Formed with tenho, tem or têm plus the past participle.',
+    summary: 'The present perfect composto: an action that repeats or continues up to now. Formed with tenho, tem, temos or têm plus the past participle.',
     uses: [
       { title: 'Lately, over a period', pt: 'Ela tem trabalhado muito este ano.', en: "She's been working a lot this year." },
       { title: 'Something you keep doing', pt: 'Eu tenho estudado português todo dia.', en: "I've been studying Portuguese every day." },
-      { title: 'Not yet', pt: 'Eu ainda não tenho visto o novo filme.', en: "I haven't seen the new movie yet." },
+      { title: 'A repeated habit up to now', pt: 'Eles têm saído muito ultimamente.', en: "They've been going out a lot lately." },
     ],
-    signals: ['ultimamente', 'nunca', 'este ano', 'já', 'ainda não'],
+    signals: ['ultimamente', 'este ano', 'nos últimos dias', 'desde março', 'cada vez mais'],
     irregulars: [
       { verb: 'fazer', forms: 'feito' },
       { verb: 'dizer', forms: 'dito' },
@@ -330,10 +330,10 @@ export const LEARN: Record<string, Learn> = {
       { pt: 'Ela tem trabalhado muito este ano.', en: "She's been working a lot this year." },
       { pt: 'Nós temos conversado bastante sobre isso.', en: "We've been talking about this a lot." },
       { pt: 'Ele tem chegado tarde toda semana.', en: "He's been arriving late every week." },
-      { pt: 'Eu ainda não tenho visto o novo filme.', en: "I haven't seen the new movie yet." },
+      { pt: 'Eu não tenho visto filmes ultimamente.', en: "I haven't been watching movies lately." },
     ],
     note: "Watch out: tenho falado means \"I've been speaking lately\", not \"I spoke\". For a finished event, use falei.",
-    why: 'Use it for something that connects to now; for a finished event, use the perfeito.',
+    why: 'Use it for an action that repeats or continues up to now; one finished event takes the perfeito.',
   },
 
   fut: {
@@ -345,11 +345,9 @@ export const LEARN: Record<string, Learn> = {
     ],
     signals: ['amanhã', 'no futuro', 'um dia', 'em breve', 'daqui a'],
     irregulars: [
-      { verb: 'ser', forms: 'serei, será, seremos, serão' },
-      { verb: 'ter', forms: 'terei, terá, teremos, terão' },
       { verb: 'fazer', forms: 'farei, fará, faremos, farão' },
       { verb: 'dizer', forms: 'direi, dirá, diremos, dirão' },
-      { verb: 'poder', forms: 'poderei, poderá, poderemos, poderão' },
+      { verb: 'trazer', forms: 'trarei, trará, traremos, trarão' },
     ],
     examples: [
       { pt: 'Eu te enviarei o relatório amanhã.', en: "I'll send you the report tomorrow." },
@@ -370,11 +368,7 @@ export const LEARN: Record<string, Learn> = {
     ],
     signals: ['para', 'sem', 'antes de', 'depois de', 'ao'],
     irregulars: [
-      { verb: 'ser', forms: 'sermos, serem' },
-      { verb: 'ir', forms: 'irmos, irem' },
-      { verb: 'ter', forms: 'termos, terem' },
       { verb: 'pôr', forms: 'pormos, porem' },
-      { verb: 'dizer', forms: 'dizermos, dizerem' },
     ],
     examples: [
       { pt: 'Estudamos muito para nós passarmos no exame.', en: 'We studied hard so that we would pass the exam.' },

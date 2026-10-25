@@ -10,13 +10,13 @@ function s(id: number, pt: string, form: string, lemma: string, tense: Tense, sl
 export const CONTRAST: Sentence[] = [
   // perfeito vs imperfeito
   s(-1, 'Ontem eu falei com a minha mãe.', 'falei', 'falar', 'perf', 'eu', 'Yesterday I talked to my mom.', 'A finished action at a clear time: ontem.'),
-  s(-2, 'Ele comeu tudo no almoço.', 'comeu', 'comer', 'perf', 'ele', 'He ate everything at lunch.', 'One completed event, so perfeito.'),
+  s(-2, 'Ontem ele comeu tudo no almoço.', 'comeu', 'comer', 'perf', 'ele', 'Yesterday he ate everything at lunch.', 'Ontem marks one finished event: perfeito.'),
   s(-3, 'Nós chegamos tarde na festa.', 'chegamos', 'chegar', 'perf', 'nos', 'We arrived late to the party.', 'A single finished event at a point in time.'),
   s(-4, 'Eles venderam o carro semana passada.', 'venderam', 'vender', 'perf', 'eles', 'They sold the car last week.', 'A finished event with a time marker: semana passada.'),
   s(-5, 'Eu fui ao mercado ontem.', 'fui', 'ir', 'perf', 'eu', 'I went to the market yesterday.', 'Irregular perfeito: fui, foi, fomos, foram.'),
-  s(-6, 'Ele não pôde ir à festa.', 'pôde', 'poder', 'perf', 'ele', "He couldn't go to the party.", 'Poder is irregular in the perfeito: pude, pôde.'),
+  s(-6, 'Ele não pôde ir à festa naquele dia.', 'pôde', 'poder', 'perf', 'ele', "He couldn't go to the party that day.", 'Naquele dia marks one finished event: perfeito.'),
   s(-7, 'Nós fizemos a lição ontem à noite.', 'fizemos', 'fazer', 'perf', 'nos', 'We did the homework last night.', 'Fazer is irregular in the perfeito: fiz, fez, fizemos.'),
-  s(-8, 'Eles disseram a verdade no fim.', 'disseram', 'dizer', 'perf', 'eles', 'They told the truth in the end.', 'A completed act of saying: perfeito.'),
+  s(-8, 'De repente, eles disseram a verdade.', 'disseram', 'dizer', 'perf', 'eles', 'Suddenly, they told the truth.', 'De repente marks one sudden, finished act: perfeito.'),
   s(-9, 'Eu li o livro em uma semana.', 'li', 'ler', 'perf', 'eu', 'I read the book in a week.', 'A completed action with a span of time: em uma semana.'),
   s(-10, 'Ela perdeu o ônibus de manhã.', 'perdeu', 'perder', 'perf', 'ele', 'She missed the bus this morning.', 'One finished event at a point in time: de manhã.'),
   s(-11, 'Quando eu era criança, eu morava em Recife.', 'era', 'ser', 'imperf', 'eu', 'When I was a kid, I lived in Recife.', 'Background description, so imperfeito: era.'),
@@ -24,11 +24,11 @@ export const CONTRAST: Sentence[] = [
   s(-13, 'Enquanto eu trabalhava, ela dormia.', 'trabalhava', 'trabalhar', 'imperf', 'eu', 'While I was working, she was sleeping.', 'An ongoing action in the past with no clear end.'),
   s(-14, 'Naquela época, nós jogávamos bola todo sábado.', 'jogávamos', 'jogar', 'imperf', 'nos', 'Back then, we played ball every Saturday.', 'A repeated habit in the past.'),
   s(-15, 'Eles sempre ouviam rádio no carro.', 'ouviam', 'ouvir', 'imperf', 'eles', 'They always listened to the radio in the car.', 'A repeated habit, so imperfeito.'),
-  s(-16, 'Ele estava cansado depois do treino.', 'estava', 'estar', 'imperf', 'ele', 'He was tired after training.', 'Describing a state in the past: imperfeito.'),
+  s(-16, 'Todo dia ele estava cansado depois do treino.', 'estava', 'estar', 'imperf', 'ele', 'Every day he was tired after training.', 'Todo dia marks a repeated state in the past: imperfeito.'),
   s(-17, 'Eu tinha dez anos quando nos mudamos.', 'tinha', 'ter', 'imperf', 'eu', 'I was ten when we moved.', 'Background age in the past: imperfeito.'),
   s(-18, 'Ela tomava café com leite todo dia.', 'tomava', 'tomar', 'imperf', 'ele', 'She had coffee with milk every day.', 'A habit, so imperfeito.'),
   s(-19, 'Quando era pequeno, ele falava muito.', 'era', 'ser', 'imperf', 'ele', 'When he was little, he talked a lot.', 'A description of the past, so imperfeito.'),
-  s(-20, 'Os meninos saíam da escola às cinco.', 'saíam', 'sair', 'imperf', 'eles', 'The kids used to leave school at five.', 'A regular routine in the past.'),
+  s(-20, 'Os meninos sempre saíam da escola às cinco.', 'saíam', 'sair', 'imperf', 'eles', 'The kids always used to leave school at five.', 'Sempre marks a regular routine in the past: imperfeito.'),
 
   // presente do subjuntivo: após que / espero que / talvez
   s(-21, 'Espero que você tenha um bom dia.', 'tenha', 'ter', 'subj_pres', 'ele', 'I hope you have a good day.', 'After espero que, the verb takes the subjuntivo.'),
@@ -44,10 +44,10 @@ export const CONTRAST: Sentence[] = [
 
   // imperfeito do subjuntivo: se … , eu …ria
   s(-31, 'Se eu tivesse dinheiro, eu compraria um carro.', 'tivesse', 'ter', 'subj_imperf', 'eu', "If I had money, I'd buy a car.", 'After se, the imperfeito do subjuntivo; the result is -ria.'),
-  s(-32, 'Se ele fosse rico, eu compraria uma casa.', 'fosse', 'ser', 'subj_imperf', 'ele', "If he were rich, I'd buy a house.", 'An unreal situation after se: fosse.'),
+  s(-32, 'Se ele fosse rico, eu pediria um empréstimo.', 'fosse', 'ser', 'subj_imperf', 'ele', "If he were rich, I'd ask for a loan.", 'After se, the imperfeito do subjuntivo: fosse.'),
   s(-33, 'Se nós soubéssemos, eu avisaria todo mundo.', 'soubéssemos', 'saber', 'subj_imperf', 'nos', "If we knew, I'd tell everyone.", 'After se, nós takes -éssemos.'),
   s(-34, 'Se eu pudesse, eu ficaria mais um dia.', 'pudesse', 'poder', 'subj_imperf', 'eu', "If I could, I'd stay one more day.", 'After se, poder becomes pudesse.'),
-  s(-35, 'Se ele soubesse a verdade, eu contaria tudo a ele.', 'soubesse', 'saber', 'subj_imperf', 'ele', "If he knew the truth, I'd tell him everything.", 'After se, the imperfeito do subjuntivo: soubesse.'),
+  s(-35, 'Se ele soubesse a verdade, eu ficaria com vergonha.', 'soubesse', 'saber', 'subj_imperf', 'ele', "If he knew the truth, I'd be ashamed.", 'After se, the imperfeito do subjuntivo: soubesse.'),
   s(-36, 'Se eles viessem cedo, eu jantaria com eles.', 'viessem', 'vir', 'subj_imperf', 'eles', "If they came early, I'd have dinner with them.", 'After se, the plural is -essem.'),
   s(-37, 'Se eu dissesse isso, ela ficaria triste.', 'dissesse', 'dizer', 'subj_imperf', 'eu', "If I said that, she'd be sad.", 'After se, dizer becomes dissesse.'),
   s(-38, 'Se ela lesse mais, eu ficaria feliz.', 'lesse', 'ler', 'subj_imperf', 'ele', "If she read more, I'd be happy.", 'After se, the -er verb takes -esse.'),
@@ -61,7 +61,7 @@ export const CONTRAST: Sentence[] = [
   s(-44, 'Se eu puder, eu passo aí.', 'puder', 'poder', 'subj_fut', 'eu', "If I can, I'll stop by.", 'After se, poder becomes puder.'),
   s(-45, 'Quando nós tivermos tempo, a gente viaja.', 'tivermos', 'ter', 'subj_fut', 'nos', "When we have time, we'll travel.", 'After quando, nós takes -ermos.'),
   s(-46, 'Se você fizer isso, eu fico feliz.', 'fizer', 'fazer', 'subj_fut', 'ele', "If you do that, I'll be happy.", 'After se, fazer becomes fizer.'),
-  s(-47, 'Quando a gente souber, avisa.', 'souber', 'saber', 'subj_fut', 'ele', "When we know, let us know.", 'After quando, saber becomes souber.'),
+  s(-47, 'Quando a gente souber, a gente te avisa.', 'souber', 'saber', 'subj_fut', 'ele', "When we know, we'll let you know.", 'After quando, a future event uses the future subjuntivo: souber.'),
   s(-48, 'Se eles quiserem, eles vêm à festa.', 'quiserem', 'querer', 'subj_fut', 'eles', "If they want to, they'll come to the party.", 'After se, the plural of querer is quiserem.'),
   s(-49, 'Quando eu acabar o trabalho, eu te ligo.', 'acabar', 'acabar', 'subj_fut', 'eu', "When I finish work, I'll call you.", 'After quando, the -ar verb keeps its infinitive form for eu.'),
   s(-50, 'Se você vir o Pedro, dá um oi pra ele.', 'vir', 'ver', 'subj_fut', 'ele', 'If you see Pedro, say hi to him.', 'Ver becomes vir in the future subjuntivo.'),

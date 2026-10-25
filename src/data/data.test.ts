@@ -53,6 +53,20 @@ test('contrast sentences match the tables', () => {
   }
 });
 
+test('single-tense irregular forms match the tense table', () => {
+  const SKIP = ['prog', 'fut_ir', 'perf_comp', 'mqp_comp', 'perf_vs_imperf'];
+  for (const u of UNITS) {
+    if (SKIP.includes(u.id) || u.tenses.length !== 1) continue;
+    const tense = u.tenses[0];
+    for (const i of LEARN[u.id].irregulars) {
+      const forms = i.forms.split(', ');
+      const slots = ['eu', 'ele', 'nos', 'eles'].slice(4 - forms.length);
+      const cells = slots.map(s => (byLemma.get(i.verb)!.forms as any)[tense][s]);
+      expect(forms, `${u.id} ${i.verb}`).toEqual(cells.map(c => alternates(c)[0]));
+    }
+  }
+});
+
 test('contrast counts', () => {
   const count = (tenses: string[]) => CONTRAST.filter(s => tenses.includes(s.gap.tense)).length;
   expect(count(['perf', 'imperf'])).toBeGreaterThanOrEqual(20);
