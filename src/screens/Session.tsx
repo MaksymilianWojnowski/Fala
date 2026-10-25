@@ -3,12 +3,13 @@ import { applyAccentCombo, insertAt } from '../lib/accents';
 import { diffSpan } from '../lib/check';
 import type { VerbData } from '../lib/data';
 import { PROMPT_PRONOUNS, PROMPT_SLOT, TENSE_NAMES, alternates, promptsFor } from '../lib/names';
-import { buildSession, verbSession, type BuildInput } from '../lib/scheduler';
+import { buildSession, placementItems, verbSession, type BuildInput } from '../lib/scheduler';
 import {
   commitAnswer, reduce, startSession, untilText,
   type SessionAction, type SessionContext, type SessionState,
 } from '../lib/session';
 import type { CardState, Item, Prompt, Rating, Settings, Store, Tense, Verb } from '../lib/types';
+import { UNITS } from '../content/units';
 import { Summary } from './Summary';
 import { AccentBar, Bar, Chip, Icon } from './ui';
 
@@ -30,12 +31,15 @@ interface Pending {
 interface Props {
   store: Store;
   verbs: VerbData;
-  route: { verb?: string; test?: boolean };
+  route: { unit?: string; verb?: string; test?: boolean };
   override?: Item[];
   onReview: (items: Item[]) => void;
+  onRestart: () => void;
 }
 
-export function Session({ store, verbs, route, override, onReview }: Props) {
+export function Session({ store, verbs, route, override, onReview, onRestart }: Props) {
+  // A test needs a real unit; without one the route runs as a normal review.
+  const testUnit = route.test && route.unit ? UNITS.find((u) => u.id === route.unit) : undefined;
   const [boot, setBoot] = useState<{ before: Map<string, CardState>; settings: Settings }>();
   const [s, setS] = useState<SessionState>();
   const [value, setValue] = useState('');
@@ -56,9 +60,11 @@ export function Session({ store, verbs, route, override, onReview }: Props) {
       const [cards, units, settings] = await Promise.all([store.cards(), store.units(), store.settings()]);
       const now = Date.now();
       const input: BuildInput = { cards, units, settings, now, verbs: verbs.list, sentences: [], rng: Math.random, hasVoice: false };
-      const items = override ?? (route.verb ? verbSession(route.verb, input) : buildSession(input));
+      const items = override ?? (testUnit
+        ? placementItems(testUnit, verbs.list, settings, Math.random)
+        : route.verb ? verbSession(route.verb, input) : buildSession(input));
       if (!live) return;
-      const first = startSession(items, now, settings.minutes, route.test ? 'test' : 'review');
+      const first = startSession(items, now, settings.minutes, testUnit ? 'test' : 'review');
       latest.current = first;
       cfg.current = { ctx: { verbs: verbs.byLemma, strictAccents: settings.strictAccents }, settings };
       setS(first);
@@ -128,7 +134,14 @@ export function Session({ store, verbs, route, override, onReview }: Props) {
   }, [value]);
 
   if (!s || !boot) return null;
-  if (s.phase === 'done') return <Summary state={s} before={boot.before} store={store} verbs={verbs} onReview={onReview} />;
+  if (s.phase === 'done') {
+    return (
+      <Summary
+        state={s} before={boot.before} store={store} verbs={verbs} onReview={onReview}
+        testUnit={testUnit} onRestart={onRestart}
+      />
+    );
+  }
 
   const { settings } = boot;
   const item = s.items[s.index];

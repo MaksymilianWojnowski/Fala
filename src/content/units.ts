@@ -1,5 +1,7 @@
 import type { Unit } from '../lib/types';
 
+export const STAGE_NAMES = ['Core', 'Past', 'Moods', 'Advanced'];
+
 export const UNITS: Unit[] = [
   { id: 'pres_reg', stage: 1, name: 'Presente · regular', example: 'eu falo, como, parto', tags: [], tenses: ['pres'], filter: 'regular' },
   { id: 'pres_irr', stage: 1, name: 'Presente · irregular', example: 'eu sou, tenho, vou, faço', tags: [], tenses: ['pres'], filter: 'irregular' },

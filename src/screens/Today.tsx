@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { buildSession } from '../lib/scheduler';
-import { endOfTomorrow, reviewsDueBy, streak } from '../lib/stats';
+import { UNITS, STAGE_NAMES } from '../content/units';
+import { currentUnit, endOfTomorrow, reviewsDueBy, streak, unitProgress } from '../lib/stats';
+import { toHash } from '../lib/route';
 import { plural } from '../lib/text';
 import type { VerbData } from '../lib/data';
-import type { CardState, Item, ReviewLog, Settings, Store, UnitState } from '../lib/types';
-import { Icon } from './ui';
+import type { CardState, Item, ReviewLog, Settings, Store, Unit, UnitState } from '../lib/types';
+import { Bar, Icon } from './ui';
 
 interface TodayData {
   settings: Settings;
@@ -14,6 +16,7 @@ interface TodayData {
   items: Item[];
   tomorrow: number;
   now: number;
+  current?: { unit: Unit; learned: number; total: number };
 }
 
 interface Props {
@@ -33,7 +36,10 @@ export function Today({ store, verbs, onStart }: Props) {
       const now = Date.now();
       const items = buildSession({ cards, units, settings, now, verbs: verbs.list, sentences: [], rng: Math.random, hasVoice: false });
       const tomorrow = reviewsDueBy(cards.values(), endOfTomorrow(now));
-      if (live) setD({ settings, cards, units, logs, items, tomorrow, now });
+      const cur = currentUnit(units);
+      const unit = UNITS.find((u) => u.id === cur?.id);
+      const current = unit && { unit, ...unitProgress(unit, cards, verbs.list) };
+      if (live) setD({ settings, cards, units, logs, items, tomorrow, now, current });
     })();
     return () => {
       live = false;
@@ -95,6 +101,27 @@ export function Today({ store, verbs, onStart }: Props) {
             Start session <Icon name="arrow" />
           </a>
           <p className="muted center">{days > 0 && `${plural(days, 'day in a row', 'days in a row')} · `}{tomorrowText}</p>
+        </section>
+      )}
+
+      {d.current && (
+        <section className="stack">
+          <h2 className="eyebrow">Continue learning</h2>
+          <div className="card continue-card">
+            <div className="row-between">
+              <span className="medium">{d.current.unit.name}</span>
+              <span className="muted small">{`Stage ${d.current.unit.stage} · ${STAGE_NAMES[d.current.unit.stage - 1]}`}</span>
+            </div>
+            <span className="continue-card__example pt" lang="pt-BR">{d.current.unit.example}</span>
+            <div className="continue-card__progress">
+              <Bar pct={d.current.total ? Math.round((d.current.learned / d.current.total) * 100) : 0} />
+              <span className="muted small">{`${d.current.learned} / ${d.current.total} verbs`}</span>
+            </div>
+            <div className="continue-card__actions">
+              <a className="continue-card__learn" href={toHash({ name: 'learn', unit: d.current.unit.id })}>Learn</a>
+              <a className="continue-card__practice" href="#/session" onClick={onStart}>Practice</a>
+            </div>
+          </div>
         </section>
       )}
     </div>

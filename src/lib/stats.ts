@@ -1,6 +1,6 @@
 import { State } from 'ts-fsrs';
 import { dayKey, unitVerbs } from './scheduler';
-import type { CardState, ReviewLog, Unit, Verb } from './types';
+import type { CardState, ReviewLog, Unit, UnitState, Verb } from './types';
 
 function dayBefore(key: string): string {
   const [y, m, d] = key.split('-').map(Number);
@@ -39,4 +39,11 @@ export function unitProgress(unit: Unit, cards: Map<string, CardState>, verbs: V
   const ids = unitVerbs(unit, verbs).flatMap((v) => unit.tenses.map((t) => `c:${v.lemma}:${t}`));
   const learned = ids.filter((id) => cards.get(id)?.fsrs.state === State.Review).length;
   return { learned, total: ids.length };
+}
+
+// The learning unit started most recently ("Continue learning" and the Path highlight).
+export function currentUnit(units: Map<string, UnitState>): UnitState | undefined {
+  let best: UnitState | undefined;
+  for (const u of units.values()) if (u.status === 'learning' && (!best || u.updatedAt > best.updatedAt)) best = u;
+  return best;
 }

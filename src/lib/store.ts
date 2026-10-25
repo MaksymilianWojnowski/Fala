@@ -68,6 +68,12 @@ export function idbStore(): Store {
   return store;
 }
 
+// Starts a unit. A known unit stays known.
+export async function startLearning(store: Store, id: string): Promise<void> {
+  const status = (await store.units()).get(id)?.status === 'known' ? 'known' : 'learning';
+  await store.putUnit({ id, status, updatedAt: Date.now() });
+}
+
 export function memoryStore(init: Partial<Snapshot> = {}): Store {
   const cards = new Map((init.cards ?? []).map((c) => [c.id, c]));
   const logs = new Map((init.logs ?? []).map((l) => [l.id, l]));

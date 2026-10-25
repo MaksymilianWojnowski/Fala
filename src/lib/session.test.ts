@@ -50,3 +50,10 @@ test('untilText', () => {
   expect([untilText(30e3), untilText(10 * 60e3), untilText(3 * 3600e3), untilText(2 * 864e5)])
     .toEqual(['1 minute', '10 minutes', '3 hours', '2 days']);
 });
+
+test('test mode never times out: placement moves on past the minute limit', () => {
+  let s = startSession([fazerNos, fazerNos], 0, 10, 'test');
+  s = reduce(s, { type: 'submit', input: 'fizemos', now: 1 }, ctx);
+  s = reduce(s, { type: 'continue', now: 60 * 60000 }, ctx);
+  expect([s.phase, s.index]).toEqual(['answer', 1]);
+});

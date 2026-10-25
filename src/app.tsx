@@ -3,6 +3,8 @@ import { parseRoute, type Route } from './lib/route';
 import { loadVerbs, type VerbData } from './lib/data';
 import { idbStore } from './lib/store';
 import type { Item } from './lib/types';
+import { Learn } from './screens/Learn';
+import { Path } from './screens/Path';
 import { Session } from './screens/Session';
 import { Today } from './screens/Today';
 
@@ -86,8 +88,15 @@ export function App() {
 
   let screen: ReactNode = <h1>{route.name}</h1>;
   if (verbs && route.name === 'today') screen = <Today store={store} verbs={verbs} onStart={() => restart()} />;
+  if (verbs && route.name === 'path') screen = <Path store={store} verbs={verbs} />;
+  if (verbs && route.name === 'learn') screen = <Learn key={route.unit} store={store} verbs={verbs} unitId={route.unit} />;
   if (verbs && route.name === 'session') {
-    screen = <Session key={run.key} store={store} verbs={verbs} route={route} override={run.override} onReview={restart} />;
+    screen = (
+      <Session
+        key={run.key} store={store} verbs={verbs} route={route} override={run.override}
+        onReview={restart} onRestart={() => restart()}
+      />
+    );
   }
 
   return (

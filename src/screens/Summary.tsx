@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { UNITS } from '../content/units';
 import type { VerbData } from '../lib/data';
 import { alternates } from '../lib/names';
+import { applyPlacement, type BuildInput } from '../lib/scheduler';
 import { expectedFor, untilText, type SessionState } from '../lib/session';
+import { startLearning } from '../lib/store';
 import { endOfTomorrow, reviewsDueBy, streak, unitProgress } from '../lib/stats';
-import type { CardState, Item, ReviewLog, Settings, Store } from '../lib/types';
+import type { CardState, Item, ReviewLog, Settings, Store, Unit } from '../lib/types';
 import { plural } from '../lib/text';
 import { Bar, Icon } from './ui';
 
@@ -14,6 +16,8 @@ interface Props {
   store: Store;
   verbs: VerbData;
   onReview: (items: Item[]) => void;
+  testUnit?: Unit;
+  onRestart: () => void;
 }
 
 interface After {
@@ -24,7 +28,81 @@ interface After {
 
 const pct = (n: number, t: number) => (t ? Math.round((n / t) * 100) : 0);
 
-export function Summary({ state, before, store, verbs, onReview }: Props) {
+export function Summary(props: Props) {
+  if (props.testUnit) return <PlacementResult {...props} unit={props.testUnit} correct={props.state.counts.correct} />;
+  return <ReviewSummary {...props} />;
+}
+
+// Saves the placement result once; StrictMode's second effect run reuses the same promise.
+async function place(store: Store, verbs: VerbData, unit: Unit, correct: number): Promise<boolean> {
+  const [cards, units, settings] = await Promise.all([store.cards(), store.units(), store.settings()]);
+  const input: BuildInput = { cards, units, settings, now: Date.now(), verbs: verbs.list, sentences: [], rng: Math.random, hasVoice: false };
+  const result = applyPlacement(unit, correct, input);
+  if (result.unit) await store.putUnit(result.unit);
+  for (const c of result.cards) await store.putCard(c);
+  return result.unit !== undefined;
+}
+
+interface PlacementProps extends Props {
+  unit: Unit;
+  correct: number;
+}
+
+function PlacementResult({ unit, correct, store, verbs, onRestart }: PlacementProps) {
+  const [passed, setPassed] = useState<boolean>();
+  const [failed, setFailed] = useState(false);
+  const run = useRef<Promise<boolean> | undefined>(undefined);
+
+  useEffect(() => {
+    run.current ??= place(store, verbs, unit, correct);
+    run.current.then(setPassed, () => setFailed(true));
+  }, [store, verbs, unit, correct]);
+
+  const startFromFail = async () => {
+    try {
+      await startLearning(store, unit.id);
+    } catch {
+      setFailed(true);
+      return;
+    }
+    onRestart();
+    location.hash = '#/session';
+  };
+
+  if (failed) {
+    return (
+      <div className="screen">
+        <p role="alert" className="notice"><Icon name="alert" /> Couldn't save this result. Try again.</p>
+        <a className="btn btn--ghost btn--block" href="#/today">Done</a>
+      </div>
+    );
+  }
+  if (passed === undefined) return null;
+
+  return (
+    <div className="screen">
+      <div className="stack center">
+        <span className="hero-icon"><Icon name={passed ? 'check' : 'miss'} size={48} /></span>
+        <h1 className="display">{unit.name}</h1>
+        <p className="muted">
+          {passed
+            ? `Known · ${correct} of 6 correct. Its verbs join your reviews over the next two weeks.`
+            : `${correct} of 6 correct.`}
+        </p>
+      </div>
+      <footer className="stack">
+        {!passed && (
+          <button type="button" className="btn btn--primary btn--block" onClick={() => void startFromFail()}>
+            Start learning
+          </button>
+        )}
+        <a className="btn btn--ghost btn--block" href="#/today">Done</a>
+      </footer>
+    </div>
+  );
+}
+
+function ReviewSummary({ state, before, store, verbs, onReview }: Props) {
   const [after, setAfter] = useState<After>();
 
   useEffect(() => {

@@ -89,7 +89,9 @@ export function reduce(s: SessionState, a: SessionAction, ctx: SessionContext): 
     case 'continue': {
       if (s.phase !== 'feedback') return s;
       const index = s.index + 1;
-      if (index >= s.items.length || a.now - s.startedAt >= s.minutes * MINUTE) {
+      // Placement (test mode) has no time limit.
+      const timeUp = s.mode === 'review' && a.now - s.startedAt >= s.minutes * MINUTE;
+      if (index >= s.items.length || timeUp) {
         return { ...s, phase: 'done', last: undefined };
       }
       return { ...s, index, phase: 'answer', last: undefined };
