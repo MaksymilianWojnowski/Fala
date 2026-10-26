@@ -1,12 +1,14 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { isBr, loadVoices, pickVoice, speak } from '../lib/speech';
 import { applyTheme } from '../lib/theme';
 import { toHash } from '../lib/route';
+import { getSyncStatus, isSyncCode, newSyncCode, runSync, SYNC_URL, subscribeSync } from '../lib/sync';
 import type { Settings as SettingsData, Store } from '../lib/types';
 import { Icon } from './ui';
 
 interface Props {
   store: Store;
+  incoming?: string; // sync code from #/settings?sync=CODE
 }
 
 const MINUTES: SettingsData['minutes'][] = [5, 10, 20];
@@ -16,10 +18,12 @@ const THEMES: { value: SettingsData['theme']; label: string }[] = [
   { value: 'dark', label: 'Dark' },
 ];
 
-export function Settings({ store }: Props) {
+export function Settings({ store, incoming }: Props) {
   const [s, setS] = useState<SettingsData>();
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [failed, setFailed] = useState(false);
+  const [draft, setDraft] = useState('');
+  const sync = useSyncExternalStore(subscribeSync, getSyncStatus);
 
   useEffect(() => {
     let live = true;
@@ -33,6 +37,11 @@ export function Settings({ store }: Props) {
     };
   }, [store]);
 
+  // A sync can bring in newer settings from another device; reload so the next change does not overwrite them.
+  useEffect(() => {
+    if (sync) void store.settings().then(setS);
+  }, [sync, store]);
+
   if (!s) return null;
 
   // Every change is saved at once, stamped with updatedAt so sync can tell which copy is newer.
@@ -41,8 +50,17 @@ export function Settings({ store }: Props) {
     setS(next);
     setFailed(false);
     if (patch.theme) applyTheme(next.theme);
-    void store.putSettings(next).catch(() => setFailed(true));
+    return store.putSettings(next).catch(() => setFailed(true));
   };
+
+  const join = async (code: string) => {
+    await update({ syncCode: code });
+    await runSync(store);
+  };
+
+  const syncedText = sync && (sync.result === 'ok'
+    ? `Synced ${new Date(sync.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+    : sync.result === 'offline' ? 'Offline, will retry' : 'Sync failed');
 
   const br = voices.filter(isBr);
   const voice = pickVoice(voices, s.voice);
@@ -140,7 +158,56 @@ export function Settings({ store }: Props) {
         </fieldset>
       </Section>
 
-      <Section title="Sync" />
+      <Section title="Sync">
+        {!SYNC_URL && <p className="muted small">Sync isn't configured yet.</p>}
+        {SYNC_URL && !s.syncCode && (
+          <div className="stack">
+            <button type="button" className="btn btn--primary btn--block" onClick={() => void join(newSyncCode())}>
+              Create sync code
+            </button>
+            <form
+              className="row-between"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (isSyncCode(draft)) void join(draft);
+              }}
+            >
+              <input
+                className="mono sync-input"
+                aria-label="Enter code from your other device"
+                placeholder="Enter code from your other device"
+                value={draft}
+                onChange={(e) => setDraft(e.target.value.trim())}
+              />
+              <button type="submit" className="btn btn--ghost">Connect</button>
+            </form>
+          </div>
+        )}
+        {SYNC_URL && incoming && incoming !== s.syncCode && isSyncCode(incoming) && (
+          <div className="stack">
+            <p>{`Connect this device to sync code ${incoming}?`}</p>
+            <button type="button" className="btn btn--primary btn--block" onClick={() => void join(incoming)}>
+              Connect
+            </button>
+          </div>
+        )}
+        {SYNC_URL && s.syncCode && (
+          <div className="stack">
+            <code className="mono">{s.syncCode}</code>
+            <button
+              type="button"
+              className="btn btn--ghost btn--block"
+              onClick={() => void navigator.clipboard?.writeText(`${location.origin}/#/settings?sync=${s.syncCode}`).catch(() => undefined)}
+            >
+              Copy link
+            </button>
+            <button type="button" className="btn btn--ghost btn--block" onClick={() => void runSync(store)}>
+              Sync now
+            </button>
+            {syncedText && <p className="muted small" role="status">{syncedText}</p>}
+          </div>
+        )}
+      </Section>
 
       <Section title="About">
         <p className="muted small">Sentences from Tatoeba (tatoeba.org), CC BY 2.0 FR, by their contributors.</p>

@@ -1,0 +1,11 @@
+name = "fala-sync"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+
+# Task 16 fills in the real namespace id and production ORIGIN.
+[[kv_namespaces]]
+binding = "FALA"
+id = "local"
+
+[vars]
+ORIGIN = "http://localhost:5173"

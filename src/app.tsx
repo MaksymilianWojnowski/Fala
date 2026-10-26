@@ -2,6 +2,7 @@ import { useEffect, useState, useSyncExternalStore, type ReactNode } from 'react
 import { parseRoute, type Route } from './lib/route';
 import { loadVerbs, type VerbData } from './lib/data';
 import { idbStore } from './lib/store';
+import { runSync } from './lib/sync';
 import type { Item } from './lib/types';
 import { Learn } from './screens/Learn';
 import { Path } from './screens/Path';
@@ -99,6 +100,15 @@ export function App() {
     void store.settings().then((s) => applyTheme(s.theme));
   }, [store]);
 
+  // Sync on open, then every 5 minutes while visible. runSync does nothing without a sync code.
+  useEffect(() => {
+    void runSync(store);
+    const id = setInterval(() => {
+      if (document.visibilityState === 'visible') void runSync(store);
+    }, 5 * 60e3);
+    return () => clearInterval(id);
+  }, [store]);
+
   let screen: ReactNode = <h1>{route.name}</h1>;
   if (verbs && route.name === 'today') screen = <Today store={store} verbs={verbs} onStart={() => restart()} />;
   if (verbs && route.name === 'path') screen = <Path store={store} verbs={verbs} />;
@@ -106,7 +116,7 @@ export function App() {
   if (route.name === 'progress') screen = <Progress store={store} />;
   // Keyed by lemma so a new #/verbs/:lemma pre-fills the search again.
   if (verbs && route.name === 'verbs') screen = <Verbs key={route.lemma ?? ''} store={store} verbs={verbs} lemma={route.lemma} />;
-  if (route.name === 'settings') screen = <Settings store={store} />;
+  if (route.name === 'settings') screen = <Settings store={store} incoming={route.sync} />;
   if (verbs && route.name === 'session') {
     screen = (
       <Session

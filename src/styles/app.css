@@ -339,3 +339,8 @@
   background: var(--bg); color: var(--ink); font: inherit; font-size: 16px;
 }
 .settings__body .muted { padding-top: 8px; }
+.mono { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 15px; word-break: break-all; }
+.sync-input {
+  flex: 1; min-width: 0; min-height: 44px; padding: 0 10px; box-sizing: border-box;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font-size: 16px;
+}

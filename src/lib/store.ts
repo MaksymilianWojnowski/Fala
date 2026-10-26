@@ -1,4 +1,4 @@
-import { clear, createStore, entries, get, set, setMany, values, type UseStore } from 'idb-keyval';
+import { createStore, delMany, entries, get, keys, set, setMany, values, type UseStore } from 'idb-keyval';
 import type { CardState, ReviewLog, Settings, Snapshot, Store, UnitState } from './types';
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -54,14 +54,19 @@ export function idbStore(): Store {
       const [c, l, u, settings] = await Promise.all([store.cards(), store.logs(), store.units(), store.settings()]);
       return { cards: [...c.values()], logs: l, units: [...u.values()], settings };
     },
+    // Writes first, then drops stale keys, so a crash mid-way never leaves the store empty.
     async replace(s) {
-      await Promise.all([clear(cards), clear(logs), clear(units)]);
       await Promise.all([
         setMany(pairs(s.cards), cards),
         setMany(pairs(s.logs), logs),
         setMany(pairs(s.units), units),
       ]);
       await store.putSettings(s.settings);
+      const prune = async (db: UseStore, keep: { id: string }[]) => {
+        const live = new Set(keep.map((x) => x.id));
+        await delMany((await keys<string>(db)).filter((k) => !live.has(k)), db);
+      };
+      await Promise.all([prune(cards, s.cards), prune(logs, s.logs), prune(units, s.units)]);
     },
   };
   cached = store;
@@ -113,12 +118,16 @@ export function memoryStore(init: Partial<Snapshot> = {}): Store {
       return { cards: [...cards.values()], logs: [...logs.values()], units: [...units.values()], settings: { ...settings } };
     },
     async replace(s) {
-      cards.clear();
-      logs.clear();
-      units.clear();
+      const prune = <T>(m: Map<string, T>, keep: { id: string }[]) => {
+        const live = new Set(keep.map((x) => x.id));
+        for (const k of m.keys()) if (!live.has(k)) m.delete(k);
+      };
       s.cards.forEach((c) => cards.set(c.id, c));
       s.logs.forEach((l) => logs.set(l.id, l));
       s.units.forEach((u) => units.set(u.id, u));
+      prune(cards, s.cards);
+      prune(logs, s.logs);
+      prune(units, s.units);
       settings = { ...s.settings };
     },
   };

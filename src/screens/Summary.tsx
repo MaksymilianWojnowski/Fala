@@ -5,6 +5,7 @@ import { alternates } from '../lib/names';
 import { applyPlacement, type BuildInput } from '../lib/scheduler';
 import { expectedFor, untilText, type SessionState } from '../lib/session';
 import { startLearning } from '../lib/store';
+import { runSync } from '../lib/sync';
 import { endOfTomorrow, reviewsDueBy, streak, unitProgress } from '../lib/stats';
 import type { CardState, Item, ReviewLog, Settings, Store, Unit } from '../lib/types';
 import { plural } from '../lib/text';
@@ -107,6 +108,8 @@ function ReviewSummary({ state, before, store, verbs, onReview }: Props) {
 
   useEffect(() => {
     let live = true;
+    // The session just ended, so push its reviews now.
+    void runSync(store);
     void (async () => {
       const [cards, logs, settings] = await Promise.all([store.cards(), store.logs(), store.settings()]);
       if (live) setAfter({ cards, logs, settings });
