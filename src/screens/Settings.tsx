@@ -53,8 +53,12 @@ export function Settings({ store, incoming }: Props) {
     return store.putSettings(next).catch(() => setFailed(true));
   };
 
+  // Saves the code without bumping updatedAt, so a join never outranks the other device's newer settings.
   const join = async (code: string) => {
-    await update({ syncCode: code });
+    const next = { ...s, syncCode: code };
+    setS(next);
+    setFailed(false);
+    await store.putSettings(next).catch(() => setFailed(true));
     await runSync(store);
   };
 

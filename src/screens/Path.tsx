@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { STAGE_NAMES, UNITS } from '../content/units';
 import type { VerbData } from '../lib/data';
 import { toHash } from '../lib/route';
+import { getSyncStatus, subscribeSync } from '../lib/sync';
 import { currentUnit, unitProgress } from '../lib/stats';
 import type { CardState, Store, Unit, UnitState } from '../lib/types';
 import { Icon } from './ui';
@@ -21,6 +22,8 @@ const pct = (n: number, t: number) => (t ? Math.round((n / t) * 100) : 0);
 export function Path({ store, verbs }: Props) {
   const [d, setD] = useState<Data>();
   const [stage4Open, setStage4Open] = useState(false);
+  // Reload when a sync finishes so units started on another device show up.
+  const sync = useSyncExternalStore(subscribeSync, getSyncStatus);
 
   useEffect(() => {
     let live = true;
@@ -31,7 +34,7 @@ export function Path({ store, verbs }: Props) {
     return () => {
       live = false;
     };
-  }, [store]);
+  }, [store, sync]);
 
   if (!d) return null;
   const current = currentUnit(d.units)?.id;
@@ -75,7 +78,7 @@ export function Path({ store, verbs }: Props) {
                     <div key={u.id} className={`path-row${u.id === current ? ' path-row--current' : ''}`}>
                       <a className="path-row__main" href={toHash({ name: 'learn', unit: u.id })}>
                         <span className="path-row__name">
-                          {u.name}
+                          <span lang="pt-BR">{u.name}</span>
                           {u.tags.map((t) => <span key={t} className="tag">{t}</span>)}
                         </span>
                         <span className="path-row__example pt" lang="pt-BR">{u.example}</span>

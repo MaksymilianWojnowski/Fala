@@ -84,7 +84,7 @@ function PlacementResult({ unit, correct, store, verbs, onRestart }: PlacementPr
     <div className="screen">
       <div className="stack center">
         <span className="hero-icon"><Icon name={passed ? 'check' : 'miss'} size={48} /></span>
-        <h1 className="display">{unit.name}</h1>
+        <h1 className="display" lang="pt-BR">{unit.name}</h1>
         <p className="muted">
           {passed
             ? `Known · ${correct} of 6 correct. Its verbs join your reviews over the next two weeks.`
@@ -153,7 +153,7 @@ function ReviewSummary({ state, before, store, verbs, onReview }: Props) {
             {rose.map(({ unit, b, a }) => (
               <div key={unit.id} className="stack">
                 <div className="row-between">
-                  <span className="medium">{unit.name}</span>
+                  <span className="medium" lang="pt-BR">{unit.name}</span>
                   <span className="muted">{pct(b.learned, b.total)}% → <b className="ok">{pct(a.learned, a.total)}%</b></span>
                 </div>
                 <Bar pct={pct(b.learned, b.total)} delta={pct(a.learned, a.total) - pct(b.learned, b.total)} />

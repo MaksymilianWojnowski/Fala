@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { State } from 'ts-fsrs';
 import { UNITS } from '../content/units';
 import { toHash } from '../lib/route';
+import { getSyncStatus, subscribeSync } from '../lib/sync';
 import { TENSE_NAMES } from '../lib/names';
 import { hardestVerbs, promptAccuracy, recall } from '../lib/stats';
 import type { CardState, Prompt, ReviewLog, Store, UnitState } from '../lib/types';
@@ -26,6 +27,8 @@ const level = (pct: number) => (pct >= 90 ? 1 : pct >= 75 ? 2 : pct >= 60 ? 3 : 
 
 export function Progress({ store }: Props) {
   const [d, setD] = useState<Data>();
+  // Reload when a sync finishes so reviews from another device show up.
+  const sync = useSyncExternalStore(subscribeSync, getSyncStatus);
 
   useEffect(() => {
     let live = true;
@@ -36,7 +39,7 @@ export function Progress({ store }: Props) {
     return () => {
       live = false;
     };
-  }, [store]);
+  }, [store, sync]);
 
   if (!d) return null;
 
@@ -91,14 +94,14 @@ export function Progress({ store }: Props) {
           <p className="muted">Start a unit in Path to see your grid.</p>
         ) : (
           <>
-            <div className="card heat-card" lang="pt-BR">
+            <div className="card heat-card">
               <div className="heat-row heat-row--head">
                 <span />
-                {PEOPLE.map((p) => <span key={p}>{p}</span>)}
+                {PEOPLE.map((p) => <span key={p} lang="pt-BR">{p}</span>)}
               </div>
               {tenses.map((t) => (
                 <div key={t} className="heat-row">
-                  <span className="heat-row__name pt">{TENSE_NAMES[t]}</span>
+                  <span className="heat-row__name pt" lang="pt-BR">{TENSE_NAMES[t]}</span>
                   {PEOPLE.map((p) => <HeatCell key={p} acc={acc.get(`${t}.${p}`)} />)}
                 </div>
               ))}

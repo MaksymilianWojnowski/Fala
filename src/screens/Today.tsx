@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { loadSentences, type VerbData } from '../lib/data';
 import { buildSession } from '../lib/scheduler';
 import { loadVoices, pickVoice } from '../lib/speech';
@@ -8,6 +8,7 @@ import { currentUnit, endOfTomorrow, promptAccuracy, reviewsDueBy, streak, unitP
 import { toHash } from '../lib/route';
 import { plural } from '../lib/text';
 import { exampleForms } from '../lib/verbs';
+import { getSyncStatus, subscribeSync } from '../lib/sync';
 import type { CardState, Item, Prompt, ReviewLog, Settings, Store, Tense, Unit, UnitState } from '../lib/types';
 import { Bar, Icon } from './ui';
 
@@ -32,6 +33,8 @@ interface Props {
 export function Today({ store, verbs, onStart }: Props) {
   const [d, setD] = useState<TodayData>();
   const [startFailed, setStartFailed] = useState(false);
+  // A sync on app open can bring in reviews from another device; reload when it finishes.
+  const sync = useSyncExternalStore(subscribeSync, getSyncStatus);
 
   useEffect(() => {
     let live = true;
@@ -53,7 +56,7 @@ export function Today({ store, verbs, onStart }: Props) {
     return () => {
       live = false;
     };
-  }, [store, verbs]);
+  }, [store, verbs, sync]);
 
   if (!d) return null;
 
@@ -135,7 +138,7 @@ export function Today({ store, verbs, onStart }: Props) {
           <h2 className="eyebrow">Continue learning</h2>
           <div className="card continue-card">
             <div className="row-between">
-              <span className="medium">{d.current.unit.name}</span>
+              <span className="medium" lang="pt-BR">{d.current.unit.name}</span>
               <span className="muted small">{`Stage ${d.current.unit.stage} · ${STAGE_NAMES[d.current.unit.stage - 1]}`}</span>
             </div>
             <span className="continue-card__example pt" lang="pt-BR">{d.current.unit.example}</span>

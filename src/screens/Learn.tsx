@@ -83,7 +83,7 @@ export function Learn({ store, verbs, unitId }: Props) {
       <a className="back" href={toHash({ name: 'path' })}><Icon name="chevron" size={18} />Path</a>
 
       <section className="stack">
-        <h1 className="display">{unit.name}</h1>
+        <h1 className="display" lang="pt-BR">{unit.name}</h1>
         <p className="learn__example pt" lang="pt-BR">{unit.example}</p>
         <div className="chips">
           <span className="chip">{`Stage ${unit.stage} · ${STAGE_NAMES[unit.stage - 1]}`}</span>

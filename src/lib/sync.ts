@@ -27,6 +27,13 @@ export function merge(a: Snapshot, b: Snapshot): Snapshot {
   };
 }
 
+// Only the fields merge and revive read; anything else from a bad blob would surface as a TypeError.
+function isSnapshot(x: unknown): x is Snapshot {
+  const s = x as Snapshot;
+  return !!s && typeof s === 'object' && Array.isArray(s.cards) && Array.isArray(s.logs) && Array.isArray(s.units)
+    && s.cards.every((c) => !!c?.fsrs) && !!s.settings && typeof s.settings === 'object';
+}
+
 // JSON turns Dates into strings; ts-fsrs needs real Dates back.
 export function reviveSnapshot(raw: unknown): Snapshot {
   const s = raw as Snapshot;
@@ -48,14 +55,20 @@ export async function syncNow(
   try {
     const res = await fetchFn(url);
     if (!res.ok && res.status !== 404) return 'error';
-    if (res.status !== 404) await store.applyRemote(reviveSnapshot(await res.json()));
+    // A malformed blob is skipped, not applied, and is overwritten by the PUT below.
+    let valid = true;
+    if (res.status !== 404) {
+      const raw: unknown = await res.json();
+      if (isSnapshot(raw)) await store.applyRemote(reviveSnapshot(raw));
+      else valid = false;
+    }
     // Read after applying so the PUT carries the merged state and any writes made meanwhile.
     const put = await fetchFn(url, {
       method: 'PUT',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(await store.snapshot()),
     });
-    return put.ok ? 'ok' : 'error';
+    return put.ok && valid ? 'ok' : 'error';
   } catch (e) {
     return e instanceof TypeError ? 'offline' : 'error';
   }

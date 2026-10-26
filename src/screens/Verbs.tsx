@@ -4,7 +4,8 @@ import { PROMPT_PRONOUNS, PROMPT_SLOT, TENSES, TENSE_NAMES, alternates, promptsF
 import { toHash } from '../lib/route';
 import { loadVoices, pickVoice, speak } from '../lib/speech';
 import { findVerb } from '../lib/verbs';
-import type { Store, Tense, Verb } from '../lib/types';
+import { verbSession } from '../lib/scheduler';
+import type { CardState, Settings, Store, Tense, UnitState, Verb } from '../lib/types';
 import { Icon } from './ui';
 
 interface Props {
@@ -23,6 +24,7 @@ export function Verbs({ store, verbs, lemma }: Props) {
   const [all, setAll] = useState(false);
   const [tu, setTu] = useState(false);
   const [voice, setVoice] = useState<SpeechSynthesisVoice>();
+  const [state, setState] = useState<{ cards: Map<string, CardState>; units: Map<string, UnitState>; settings: Settings }>();
 
   useEffect(() => {
     let live = true;
@@ -31,12 +33,20 @@ export function Verbs({ store, verbs, lemma }: Props) {
       setTu(s.tu);
       setVoice(pickVoice(voices, s.voice));
     });
+    // Practice only builds conjugation items, so the sentence set is not needed here.
+    void Promise.all([store.cards(), store.units(), store.settings()]).then(([cards, units, settings]) => {
+      if (live) setState({ cards, units, settings });
+    });
     return () => {
       live = false;
     };
   }, [store]);
 
   const verb = q.trim() ? findVerb(q, verbs.list) : undefined;
+  // Undefined while loading; the Practice button only appears when the session has items.
+  const practice = verb && state
+    ? verbSession(verb.lemma, { ...state, sentences: [], now: Date.now(), verbs: verbs.list, rng: Math.random, hasVoice: !!voice })
+    : undefined;
 
   return (
     <div className="screen">
@@ -71,18 +81,20 @@ export function Verbs({ store, verbs, lemma }: Props) {
           all={all}
           onToggleAll={() => setAll((v) => !v)}
           voice={voice}
+          canPractice={practice ? practice.length > 0 : undefined}
         />
       )}
     </div>
   );
 }
 
-function VerbDetail({ verb, tu, all, onToggleAll, voice }: {
+function VerbDetail({ verb, tu, all, onToggleAll, voice, canPractice }: {
   verb: Verb;
   tu: boolean;
   all: boolean;
   onToggleAll: () => void;
   voice?: SpeechSynthesisVoice;
+  canPractice?: boolean;
 }) {
   const shown = all ? TENSE_ORDER : COMMON;
   const rank = verb.rank <= 20 ? 'top 20 verb' : verb.rank <= 50 ? 'top 50 verb' : undefined;
@@ -99,8 +111,8 @@ function VerbDetail({ verb, tu, all, onToggleAll, voice }: {
           {rank && <span className="chip">{rank}</span>}
           <span className="chip pt" lang="pt-BR">{`${alternates(verb.participle).join(' / ')} · ${verb.gerund}`}</span>
         </div>
-        <p className="muted small legend" lang="pt-BR">
-          <span className="pt">você</span> = ele, ela · <span className="pt">vocês</span> = eles, elas · <b className="legend__irr">teal</b> = irregular form
+        <p className="muted small legend">
+          <span className="pt" lang="pt-BR">você</span> = <span className="pt" lang="pt-BR">ele, ela</span> · <span className="pt" lang="pt-BR">vocês</span> = <span className="pt" lang="pt-BR">eles, elas</span> · <b className="legend__irr">teal</b> = irregular form
         </p>
       </section>
 
@@ -121,9 +133,12 @@ function VerbDetail({ verb, tu, all, onToggleAll, voice }: {
             <Icon name="listen" size={18} /> Listen
           </button>
         )}
-        <a className="btn btn--primary" href={toHash({ name: 'session', verb: verb.lemma })}>
-          Practice <span className="pt" lang="pt-BR">{verb.lemma}</span>
-        </a>
+        {canPractice === true && (
+          <a className="btn btn--primary" href={toHash({ name: 'session', verb: verb.lemma })}>
+            Practice <span className="pt" lang="pt-BR">{verb.lemma}</span>
+          </a>
+        )}
+        {canPractice === false && <p className="muted small">Nothing to practice for <span className="pt" lang="pt-BR">{verb.lemma}</span> right now.</p>}
       </div>
     </>
   );

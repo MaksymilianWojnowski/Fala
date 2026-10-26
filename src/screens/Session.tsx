@@ -138,9 +138,13 @@ export function Session({ store, verbs, route, override, onReview, onRestart }: 
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      // A held key must not repeat through feedback, so Enter cannot skip it.
+      if (e.repeat) return;
       const cur = latest.current;
       if (e.key === 'Escape') location.hash = '#/today';
       else if (e.key === 'Enter' && cur?.phase === 'feedback') {
+        // Enter on a focused button or link keeps its own action (Flag, Continue) and does not also advance.
+        if (e.target instanceof HTMLButtonElement || e.target instanceof HTMLAnchorElement) return;
         // Stops the readonly input's implicit form submit from grading the next item.
         e.preventDefault();
         dispatch({ type: 'continue', now: Date.now() });
@@ -191,6 +195,9 @@ export function Session({ store, verbs, route, override, onReview, onRestart }: 
   const gap = item.kind === 'gap' ? item : undefined;
   const tr = item.kind === 'translate' ? item : undefined;
   const verb = conj && verbs.byLemma.get(conj.lemma);
+  const gapVerb = gap && verbs.byLemma.get(gap.sentence.gap.lemma);
+  // The gap's slot is a person; highlight the first prompt row that maps to it (você, not a gente, for ele).
+  const gapPrompt = gap && promptsFor(gap.sentence.gap.tense, settings.tu).find((p) => PROMPT_SLOT[p] === gap.sentence.gap.slot);
   const feedback = s.phase === 'feedback' ? s.last : undefined;
   const shown = feedback ? alternates(feedback.expected)[0] : '';
   const [hs, he] = feedback ? diffSpan(feedback.expected, feedback.input) : [0, 0];
@@ -286,7 +293,7 @@ export function Session({ store, verbs, route, override, onReview, onRestart }: 
                     {tr.sentence.alt.map((a) => <span key={a} className="pt also__pt" lang="pt-BR">{a}</span>)}
                   </div>
                 )}
-                <WhyLine sentence={tr.sentence} />
+                <WhyLine tense={tr.sentence.gap.tense} why={tr.sentence.why} />
               </div>
             )}
           </>
@@ -374,7 +381,9 @@ export function Session({ store, verbs, route, override, onReview, onRestart }: 
             </p>
             {feedback.check.note && <p className="note">{feedback.check.note}</p>}
             {conj && verb && <Paradigm verb={verb} tense={conj.tense} asked={conj.prompt} tu={settings.tu} />}
-            {gap && <WhyLine sentence={gap.sentence} />}
+            {conj && feedback.check.result !== 'correct' && <WhyLine tense={conj.tense} />}
+            {gap && gapVerb && <Paradigm verb={gapVerb} tense={gap.sentence.gap.tense} asked={gapPrompt} tu={settings.tu} />}
+            {gap && <WhyLine tense={gap.sentence.gap.tense} why={gap.sentence.why} />}
           </div>
         )}
       </div>
@@ -444,17 +453,15 @@ function HintChip({ hint, tense }: { hint: 'tense' | 'context' | 'audio'; tense:
   return <span className="chip">Audio only</span>;
 }
 
-function WhyLine({ sentence }: { sentence: Sentence }) {
-  const tense = sentence.gap.tense;
-  const why = sentence.why ?? LEARN[unitForTense(tense).id].why;
+function WhyLine({ tense, why }: { tense: Tense; why?: string }) {
   return (
     <p className="note">
-      <b>Why <span className="pt" lang="pt-BR">{TENSE_NAMES[tense].toLowerCase()}</span>:</b> {why}
+      <b>Why <span className="pt" lang="pt-BR">{TENSE_NAMES[tense].toLowerCase()}</span>:</b> {why ?? LEARN[unitForTense(tense).id].why}
     </p>
   );
 }
 
-function Paradigm({ verb, tense, asked, tu }: { verb: Verb; tense: Tense; asked: Prompt; tu: boolean }) {
+function Paradigm({ verb, tense, asked, tu }: { verb: Verb; tense: Tense; asked?: Prompt; tu: boolean }) {
   return (
     <div className="paradigm">
       <div className="paradigm__title">

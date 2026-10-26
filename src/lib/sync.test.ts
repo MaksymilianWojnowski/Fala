@@ -78,3 +78,19 @@ test('network error → offline, store unchanged', async () => {
   expect(await syncNow(store, 'A'.repeat(22), 'https://sync.test', fake)).toBe('offline');
   expect(await store.snapshot()).toEqual(before);
 });
+
+test('malformed remote → error, PUTs local, leaves store alone', async () => {
+  const store = memoryStore({ cards: [card('c1', 1, DAY)] });
+  const before = await store.snapshot();
+  const puts: string[] = [];
+  const fake = (async (_url: string, init?: RequestInit) => {
+    if (init?.method === 'PUT') {
+      puts.push(String(init.body));
+      return new Response(null, { status: 204 });
+    }
+    return new Response(JSON.stringify({ cards: 'nope', logs: [], units: [], settings: {} }), { status: 200 });
+  }) as unknown as typeof fetch;
+  expect(await syncNow(store, 'A'.repeat(22), 'https://sync.test', fake)).toBe('error');
+  expect(puts).toHaveLength(1);
+  expect(await store.snapshot()).toEqual(before);
+});
