@@ -21,9 +21,13 @@ let sentences: Promise<Sentence[]> | undefined;
 
 // Curated contrast sentences ride along with the Tatoeba set; the 2.4 MB file loads once, on first use.
 export function loadSentences(): Promise<Sentence[]> {
+  // A failed load falls back to no sentences (conjugation still works) and is retried next time.
   sentences ??= import('../data/sentences.json').then((m) => [
     ...(m.default as unknown as Sentence[]),
     ...CONTRAST,
-  ]);
+  ]).catch(() => {
+    sentences = undefined;
+    return [];
+  });
   return sentences;
 }

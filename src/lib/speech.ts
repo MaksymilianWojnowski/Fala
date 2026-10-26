@@ -8,8 +8,16 @@ export function pickVoice<V extends VoiceLike>(voices: V[], preferred?: string):
   return br.find((v) => v.name === preferred) ?? br.find((v) => v.localService) ?? br[0];
 }
 
-// Chrome and Firefox fill the voice list late, so wait for voiceschanged, but never past the timeout.
+let voices: Promise<SpeechSynthesisVoice[]> | undefined;
+
+// Cached like loadVerbs, so Today, Session and Learn share one wait instead of each paying it.
 export function loadVoices(timeoutMs = 1500): Promise<SpeechSynthesisVoice[]> {
+  voices ??= waitForVoices(timeoutMs);
+  return voices;
+}
+
+// Chrome and Firefox fill the voice list late, so wait for voiceschanged, but never past the timeout.
+function waitForVoices(timeoutMs: number): Promise<SpeechSynthesisVoice[]> {
   const synth = globalThis.speechSynthesis;
   if (!synth) return Promise.resolve([]);
   const ready = synth.getVoices();

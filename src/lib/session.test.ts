@@ -97,6 +97,16 @@ test('flag also works from the feedback footer of a gap', () => {
   expect([s.index, s.phase, s.counts.missed]).toEqual([1, 'answer', 1]);
 });
 
+test('a suspend that starts while a commit is in flight is not undone by it', async () => {
+  const store = memoryStore();
+  const item: Item = { kind: 'translate', cardId: 't:1', sentence: comiSentence };
+  const commit = commitAnswer(store, item, 3, '', NOW);
+  const suspend = suspendCard(store, 't:1', NOW);
+  await Promise.all([commit, suspend]);
+  const card = (await store.cards()).get('t:1');
+  expect([card?.suspended, card?.passes]).toEqual([true, 1]);
+});
+
 test('flag suspends the card, creating it when missing', async () => {
   const store = memoryStore();
   await suspendCard(store, 't:1', NOW);

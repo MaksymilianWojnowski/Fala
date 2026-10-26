@@ -123,9 +123,26 @@ function advance(s: SessionState, now: number): SessionState {
   return { ...s, index, phase: 'answer', last: undefined };
 }
 
+// Writes to one card run in order: each read-modify-write starts after the previous one lands,
+// so a late commit can't overwrite a suspend (or the other way round).
+const chains = new Map<string, Promise<unknown>>();
+function serialized<T>(id: string, task: () => Promise<T>): Promise<T> {
+  const run = (chains.get(id) ?? Promise.resolve()).then(task);
+  const tail = run.then(() => undefined, () => undefined);
+  chains.set(id, tail);
+  void tail.then(() => {
+    if (chains.get(id) === tail) chains.delete(id);
+  });
+  return run;
+}
+
 // Saves one answer at once, so a closed tab keeps what was answered.
-export async function commitAnswer(store: Store, item: Item, rating: Rating, input: string, now: number): Promise<CardState> {
+export function commitAnswer(store: Store, item: Item, rating: Rating, input: string, now: number): Promise<CardState> {
   const id = item.cardId;
+  return serialized(id, () => writeAnswer(store, id, item, rating, input, now));
+}
+
+async function writeAnswer(store: Store, id: string, item: Item, rating: Rating, input: string, now: number): Promise<CardState> {
   const card = (await store.cards()).get(id) ?? newCard(id, now);
   const next = rate(card, rating, now, item.kind === 'conjugate' ? item.prompt : undefined);
   await store.putCard(next);
@@ -134,9 +151,11 @@ export async function commitAnswer(store: Store, item: Item, rating: Rating, inp
 }
 
 // Flagged cards are suspended, so they never come back in a session.
-export async function suspendCard(store: Store, cardId: string, now: number): Promise<CardState> {
-  const card = (await store.cards()).get(cardId) ?? newCard(cardId, now);
-  const next = { ...card, suspended: true, updatedAt: now };
-  await store.putCard(next);
-  return next;
+export function suspendCard(store: Store, cardId: string, now: number): Promise<CardState> {
+  return serialized(cardId, async () => {
+    const card = (await store.cards()).get(cardId) ?? newCard(cardId, now);
+    const next = { ...card, suspended: true, updatedAt: now };
+    await store.putCard(next);
+    return next;
+  });
 }

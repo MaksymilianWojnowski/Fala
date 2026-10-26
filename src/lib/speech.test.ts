@@ -21,3 +21,7 @@ test('pickVoice honours the preferred name when it is pt-BR', () => {
 test('loadVoices resolves to nothing when speech synthesis is missing', async () => {
   expect(await loadVoices(10)).toEqual([]);
 });
+
+test('loadVoices is memoized: a second call returns the same promise', () => {
+  expect(loadVoices(10)).toBe(loadVoices(10));
+});
