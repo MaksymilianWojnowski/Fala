@@ -5,8 +5,9 @@ import pytest
 from pipeline.sentences import Tok, find_gap, is_br, length_ok, simple_tense, slot_of
 from pipeline.verbs import conjugate
 
-V = {l: conjugate(l) for l in ('comer', 'falar')}
+V = {l: conjugate(l) for l in ('comer', 'falar', 'vir', 'esquecer', 'ter', 'pensar', 'fazer')}
 PAST_1S = {'Mood': 'Ind', 'Tense': 'Past', 'Person': '1', 'Number': 'Sing', 'VerbForm': 'Fin'}
+PRES_1S = {'Mood': 'Ind', 'Tense': 'Pres', 'Person': '1', 'Number': 'Sing', 'VerbForm': 'Fin'}
 
 
 def T(i, text, lemma, pos, morph, dep='root', head=None):
@@ -136,3 +137,84 @@ def test_pick_caps_shortest_per_lemma_tense():
     s = [{'id': i, 'pt': 'x' * n, 'gap': {'lemma': 'comer', 'tense': 'pres'}} for i, n in [(1, 30), (2, 10), (3, 20)]]
     s.append({'id': 4, 'pt': 'x' * 5, 'gap': {'lemma': 'falar', 'tense': 'pres'}})
     assert [x['id'] for x in pick(s, 2)] == [2, 3, 4]
+
+
+def test_r24_tu_and_vos_forms_rejected():
+    for w in ['vos', 'vosso', 'vossa', 'vossos', 'vossas', 'teu', 'tua', 'teus', 'tuas', 'contigo', 'ti']:
+        assert not is_br(f'Eu penso em {w} agora.'), w
+
+
+def test_plural_and_phrase_pt_pt_rejected():
+    assert not is_br('Eu comi pequenos-almoços.')
+    assert not is_br('As casas de banho estavam sujas.')
+
+
+def test_subj_pres_after_que():
+    s = 'Espero que ele fale com você.'
+    toks = sent(s, T(0, 'Espero', 'esperar', 'VERB', PRES_1S), T(1, 'que', 'que', 'SCONJ', {}, dep='mark', head=3),
+                T(2, 'ele', 'ele', 'PRON', {}, dep='nsubj', head=3),
+                T(3, 'fale', 'falar', 'VERB', {'Mood': 'Sub', 'Tense': 'Pres', 'Person': '3', 'Number': 'Sing',
+                                               'VerbForm': 'Fin'}),
+                T(4, 'com', 'com', 'ADP', {}), T(5, 'você', 'você', 'PRON', {}))
+    assert find_gap(toks, V) == {'start': s.index('fale'), 'end': s.index('fale') + 4, 'lemma': 'falar',
+                                 'tense': 'subj_pres', 'slot': 'ele'}
+
+
+def test_subj_pres_after_talvez():
+    s = 'Talvez ela venha amanhã.'
+    toks = sent(s, T(0, 'Talvez', 'talvez', 'ADV', {}), T(1, 'ela', 'ela', 'PRON', {}, dep='nsubj', head=2),
+                T(2, 'venha', 'vir', 'VERB', {'Mood': 'Sub', 'Tense': 'Pres', 'Person': '3', 'Number': 'Sing',
+                                              'VerbForm': 'Fin'}),
+                T(3, 'amanhã', 'amanhã', 'ADV', {}))
+    gap = find_gap(toks, V)
+    assert gap is not None and (gap['tense'], gap['slot']) == ('subj_pres', 'ele')
+
+
+def test_imp_clause_initial():
+    s = 'Fale mais devagar.'
+    toks = sent(s, T(0, 'Fale', 'falar', 'VERB', {'Mood': 'Imp', 'Person': '3', 'Number': 'Sing', 'VerbForm': 'Fin'}),
+                T(1, 'mais', 'mais', 'ADV', {}), T(2, 'devagar', 'devagar', 'ADV', {}))
+    assert find_gap(toks, V) == {'start': 0, 'end': 4, 'lemma': 'falar', 'tense': 'imp', 'slot': 'ele'}
+
+
+def test_imp_after_nao():
+    s = 'Não esqueça seu passaporte.'
+    toks = sent(s, T(0, 'Não', 'não', 'ADV', {}),
+                T(1, 'esqueça', 'esquecer', 'VERB', {'Mood': 'Sub', 'Tense': 'Pres', 'Person': '3', 'Number': 'Sing',
+                                                     'VerbForm': 'Fin'}),
+                T(2, 'seu', 'seu', 'DET', {}), T(3, 'passaporte', 'passaporte', 'NOUN', {}))
+    gap = find_gap(toks, V)
+    assert gap is not None and (gap['tense'], gap['slot']) == ('imp', 'ele')
+
+
+def test_nao_penso_is_not_subj_or_imp():
+    s = 'Não penso assim.'
+    toks = sent(s, T(0, 'Não', 'não', 'ADV', {}), T(1, 'penso', 'pensar', 'VERB', PRES_1S), T(2, 'assim', 'assim', 'ADV', {}))
+    gap = find_gap(toks, V)
+    assert gap is None or gap['tense'] not in ('subj_pres', 'imp')
+
+
+def test_syncretic_slot_from_overt_subject():
+    s = 'Eu tinha dúvidas.'
+    toks = sent(s, T(0, 'Eu', 'eu', 'PRON', {}, dep='nsubj', head=1),
+                T(1, 'tinha', 'ter', 'VERB', {'Mood': 'Ind', 'Tense': 'Imp', 'Person': '3', 'Number': 'Sing',
+                                              'VerbForm': 'Fin'}),
+                T(2, 'dúvidas', 'dúvida', 'NOUN', {}))
+    gap = find_gap(toks, V)
+    assert gap is not None and (gap['tense'], gap['slot']) == ('imperf', 'eu')
+
+
+def test_syncretic_slot_third_person_subject():
+    s = 'Ele faria isso.'
+    toks = sent(s, T(0, 'Ele', 'ele', 'PRON', {}, dep='nsubj', head=1),
+                T(1, 'faria', 'fazer', 'VERB', {'Mood': 'Cnd', 'Person': '1', 'Number': 'Sing', 'VerbForm': 'Fin'}),
+                T(2, 'isso', 'isso', 'PRON', {}))
+    gap = find_gap(toks, V)
+    assert gap is not None and (gap['tense'], gap['slot']) == ('cond', 'ele')
+
+
+def test_syncretic_without_subject_dropped():
+    s = 'Faria isso.'
+    toks = sent(s, T(0, 'Faria', 'fazer', 'VERB', {'Mood': 'Cnd', 'Person': '1', 'Number': 'Sing', 'VerbForm': 'Fin'}),
+                T(1, 'isso', 'isso', 'PRON', {}))
+    assert find_gap(toks, V) is None

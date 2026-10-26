@@ -90,3 +90,8 @@ test('core tenses have enough sentences', () => {
   for (const t of ['pres', 'perf', 'imperf'])
     expect(sentences.filter(s => s.gap.tense === t).length, t).toBeGreaterThanOrEqual(300);
 });
+
+test('subjunctive and imperative have enough sentences', () => {
+  expect(sentences.filter(s => s.gap.tense === 'subj_pres').length).toBeGreaterThanOrEqual(100);
+  expect(sentences.filter(s => s.gap.tense === 'imp').length).toBeGreaterThanOrEqual(50);
+});
