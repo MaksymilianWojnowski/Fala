@@ -53,6 +53,15 @@ export function gapParts(s: Sentence): { before: string; after: string } {
   return { before: s.pt.slice(0, s.gap.start), after: s.pt.slice(s.gap.end) };
 }
 
+// A real sentence using this verb and tense, to show the form in context.
+// Same slot first; among those, the shortest with at least 4 words (2-word lines like "O Tom faz." carry no context).
+export function exampleFor(lemma: string, tense: Tense, slot: Slot, sentences: Sentence[]): Sentence | undefined {
+  const pool = sentences.filter((s) => s.gap.lemma === lemma && s.gap.tense === tense);
+  const shortest = (xs: Sentence[]) => xs.reduce<Sentence | undefined>((a, b) => (!a || b.pt.length < a.pt.length ? b : a), undefined);
+  const best = (xs: Sentence[]) => shortest(xs.filter((s) => s.pt.split(/\s+/).length >= 4)) ?? shortest(xs);
+  return best(pool.filter((s) => s.gap.slot === slot)) ?? best(pool);
+}
+
 // The verb cell an item is asking for, if any.
 function cell(item: Item): { lemma: string; tense: Tense; slot: Slot } | undefined {
   if (item.kind === 'conjugate') return { lemma: item.lemma, tense: item.tense, slot: PROMPT_SLOT[item.prompt] };

@@ -6,7 +6,7 @@ import { PROMPT_PRONOUNS, PROMPT_SLOT, TENSE_NAMES, alternates, promptsFor } fro
 import { buildSession, placementItems, verbSession, type BuildInput } from '../lib/scheduler';
 import { loadVoices, pickVoice, speak } from '../lib/speech';
 import {
-  commitAnswer, gapParts, gradeRating, reduce, startSession, suspendCard, untilText,
+  commitAnswer, exampleFor, gapParts, gradeRating, reduce, startSession, suspendCard, untilText,
   type SessionAction, type SessionContext, type SessionState,
 } from '../lib/session';
 import type { CardState, Item, Prompt, Rating, Sentence, Settings, Store, Tense, Verb } from '../lib/types';
@@ -44,7 +44,7 @@ interface Props {
 export function Session({ store, verbs, route, override, onReview, onRestart }: Props) {
   // A test needs a real unit; without one the route runs as a normal review.
   const testUnit = route.test && route.unit ? UNITS.find((u) => u.id === route.unit) : undefined;
-  const [boot, setBoot] = useState<{ before: Map<string, CardState>; settings: Settings; voice?: SpeechSynthesisVoice }>();
+  const [boot, setBoot] = useState<{ before: Map<string, CardState>; settings: Settings; voice?: SpeechSynthesisVoice; sentences: Sentence[] }>();
   const [s, setS] = useState<SessionState>();
   const [value, setValue] = useState('');
   const [dueAt, setDueAt] = useState<number>();
@@ -81,7 +81,7 @@ export function Session({ store, verbs, route, override, onReview, onRestart }: 
       latest.current = first;
       cfg.current = { ctx: { verbs: verbs.byLemma, strictAccents: settings.strictAccents }, settings };
       setS(first);
-      setBoot({ before: cards, settings, voice });
+      setBoot({ before: cards, settings, voice, sentences });
     })();
     return () => {
       live = false;
@@ -382,6 +382,21 @@ export function Session({ store, verbs, route, override, onReview, onRestart }: 
             {feedback.check.note && <p className="note">{feedback.check.note}</p>}
             {conj && verb && <Paradigm verb={verb} tense={conj.tense} asked={conj.prompt} tu={settings.tu} />}
             {conj && feedback.check.result !== 'correct' && <WhyLine tense={conj.tense} />}
+            {conj && (() => {
+              const ex = exampleFor(conj.lemma, conj.tense, PROMPT_SLOT[conj.prompt], boot.sentences);
+              return ex && (
+                <div className="example">
+                  <span className="example__label">Example</span>
+                  <GapSentence sentence={ex} filled={ex.pt.slice(ex.gap.start, ex.gap.end)} />
+                  <p className="muted gap-en">{ex.en}</p>
+                  {voice && (
+                    <button type="button" className="listen-btn" onClick={() => listen(ex.pt)}>
+                      <Icon name="listen" size={18} /> Listen
+                    </button>
+                  )}
+                </div>
+              );
+            })()}
             {gap && gapVerb && <Paradigm verb={gapVerb} tense={gap.sentence.gap.tense} asked={gapPrompt} tu={settings.tu} />}
             {gap && <WhyLine tense={gap.sentence.gap.tense} why={gap.sentence.why} />}
           </div>

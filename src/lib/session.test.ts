@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 import verbsJson from '../data/verbs.json';
 import { memoryStore } from './store';
-import { commitAnswer, expectedFor, gapParts, gradeRating, ratingFor, reduce, startSession, suspendCard, untilText } from './session';
+import { commitAnswer, exampleFor, expectedFor, gapParts, gradeRating, ratingFor, reduce, startSession, suspendCard, untilText } from './session';
 import type { Item, Sentence, Verb } from './types';
 
 const verbs = new Map((verbsJson as unknown as Verb[]).map((v) => [v.lemma, v]));
@@ -111,4 +111,26 @@ test('flag suspends the card, creating it when missing', async () => {
   const store = memoryStore();
   await suspendCard(store, 't:1', NOW);
   expect((await store.cards()).get('t:1')?.suspended).toBe(true);
+});
+
+test('exampleFor prefers the same slot, then the shortest sentence of the tense', () => {
+  const s = (id: number, pt: string, form: string, slot: Sentence['gap']['slot'], tense: Sentence['gap']['tense'] = 'perf'): Sentence => {
+    const start = pt.indexOf(form);
+    return { id, pt, en: `en ${id}`, author: 't', gap: { start, end: start + form.length, lemma: 'fazer', tense, slot } };
+  };
+  const pool = [
+    s(1, 'Ele fez o jantar ontem à noite.', 'fez', 'ele'),
+    s(2, 'Nós fizemos tudo certo naquele dia.', 'fizemos', 'nos'),
+    s(3, 'Fizemos isso.', 'Fizemos', 'nos'),
+    s(4, 'Eu fiz.', 'fiz', 'eu'),
+    s(5, 'Nós fazemos isso.', 'fazemos', 'nos', 'pres'),
+  ];
+  // Same slot, at least 4 words beats the shorter 2-word "Fizemos isso."
+  expect(exampleFor('fazer', 'perf', 'nos', pool)?.id).toBe(2);
+  // No eles sentence: fall back to the shortest 4+ word sentence of the tense.
+  expect(exampleFor('fazer', 'perf', 'eles', pool)?.id).toBe(1);
+  // Only short ones exist for eu: still shown.
+  expect(exampleFor('fazer', 'perf', 'eu', [pool[3]])?.id).toBe(4);
+  expect(exampleFor('fazer', 'imperf', 'eu', pool)).toBeUndefined();
+  expect(exampleFor('falar', 'perf', 'eu', pool)).toBeUndefined();
 });
