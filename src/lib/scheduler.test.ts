@@ -192,3 +192,12 @@ test('placement cards do not count toward the new-card cap', () => {
   const i = input({ perf: 'learning', imperf: 'learning' }, {}, { cards });
   expect(buildSession(i).length).toBe(DEFAULT_SETTINGS.newPerDay);
 });
+
+test('conj candidates take turns across active units, in rank order within a unit', () => {
+  const i = input({ pres_reg: 'learning', imperf: 'learning' });
+  const conj = newCandidates(i).filter((id) => id.startsWith('c:'));
+  expect(new Set(conj.slice(0, 2).map((id) => id.split(':')[2]))).toEqual(new Set(['pres', 'imperf']));
+  const pres = conj.filter((id) => id.endsWith(':pres'));
+  const ranked = unitVerbs(unit('pres_reg'), VERBS).map((v) => `c:${v.lemma}:pres`);
+  expect(pres).toEqual(ranked.filter((id) => pres.includes(id)));
+});

@@ -1,7 +1,7 @@
 import { check, type CheckResult } from './check';
 import { PROMPT_SLOT } from './names';
 import { newCard, rate } from './scheduler';
-import type { CardState, Item, Rating, Slot, Store, Tense, Verb } from './types';
+import type { CardState, Item, Rating, Sentence, Slot, Store, Tense, Verb } from './types';
 
 export interface SessionState {
   items: Item[];
@@ -41,6 +41,16 @@ export function ratingFor(c: CheckResult, strict: boolean): Rating {
   if (c.result === 'correct') return 3;
   if (c.result === 'accent') return strict ? 1 : 2;
   return 1;
+}
+
+// Got it = Good, Missed = Again. Translate has no typed check, so the learner grades it.
+export function gradeRating(got: boolean): Rating {
+  return got ? 3 : 1;
+}
+
+// The sentence with its gap cut out; the gap itself is rendered by the screen.
+export function gapParts(s: Sentence): { before: string; after: string } {
+  return { before: s.pt.slice(0, s.gap.start), after: s.pt.slice(s.gap.end) };
 }
 
 // The verb cell an item is asking for, if any.
@@ -88,19 +98,29 @@ export function reduce(s: SessionState, a: SessionAction, ctx: SessionContext): 
     }
     case 'continue': {
       if (s.phase !== 'feedback') return s;
-      const index = s.index + 1;
-      // Placement (test mode) has no time limit.
-      const timeUp = s.mode === 'review' && a.now - s.startedAt >= s.minutes * MINUTE;
-      if (index >= s.items.length || timeUp) {
-        return { ...s, phase: 'done', last: undefined };
-      }
-      return { ...s, index, phase: 'answer', last: undefined };
+      return advance(s, a.now);
     }
-    // Task 13 implements grade and flag.
-    case 'grade':
+    case 'grade': {
+      if (s.phase !== 'answer') return s;
+      const item = s.items[s.index];
+      const counts = { ...s.counts };
+      if (a.got) counts.correct++;
+      else counts.missed++;
+      return advance({ ...s, counts, missed: a.got ? s.missed : [...s.missed, item] }, a.now);
+    }
+    // Flagging only skips the card; it never counts as an answer. It works from the feedback footer too.
     case 'flag':
-      return s;
+      if (s.phase === 'done') return s;
+      return advance(s, a.now);
   }
+}
+
+// Moves to the next item, or ends the run at the time limit (review mode only).
+function advance(s: SessionState, now: number): SessionState {
+  const index = s.index + 1;
+  const timeUp = s.mode === 'review' && now - s.startedAt >= s.minutes * MINUTE;
+  if (index >= s.items.length || timeUp) return { ...s, phase: 'done', last: undefined };
+  return { ...s, index, phase: 'answer', last: undefined };
 }
 
 // Saves one answer at once, so a closed tab keeps what was answered.
@@ -110,5 +130,13 @@ export async function commitAnswer(store: Store, item: Item, rating: Rating, inp
   const next = rate(card, rating, now, item.kind === 'conjugate' ? item.prompt : undefined);
   await store.putCard(next);
   await store.addLog({ id: crypto.randomUUID(), cardId: id, at: now, rating, answer: input, device: await store.device() });
+  return next;
+}
+
+// Flagged cards are suspended, so they never come back in a session.
+export async function suspendCard(store: Store, cardId: string, now: number): Promise<CardState> {
+  const card = (await store.cards()).get(cardId) ?? newCard(cardId, now);
+  const next = { ...card, suspended: true, updatedAt: now };
+  await store.putCard(next);
   return next;
 }

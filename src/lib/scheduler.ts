@@ -89,15 +89,19 @@ const isDue = (c: CardState, now: number) => !c.suspended && +c.fsrs.due <= now;
 export function newCandidates(i: BuildInput): string[] {
   const fresh = (id: string) => !i.cards.has(id);
   const passes = (id: string) => i.cards.get(id)?.passes ?? 0;
-  const conj = [...new Set(activeUnits(i).flatMap((u) =>
-    unitVerbs(u, i.verbs).flatMap((v) => u.tenses.map((t) => `c:${v.lemma}:${t}`))))].filter(fresh);
+  // Each active unit keeps rank order inside itself; units take turns in path order so one unit can't starve the rest.
+  const perUnit = activeUnits(i).map((u) => unitVerbs(u, i.verbs).flatMap((v) => u.tenses.map((t) => `c:${v.lemma}:${t}`)));
+  const conj = [...new Set(interleave(perUnit))].filter(fresh);
   const gap = i.sentences.filter((s) => passes(`c:${s.gap.lemma}:${s.gap.tense}`) >= 1)
     .map((s) => `s:${s.id}`).filter(fresh);
   const translate = i.sentences.filter((s) => passes(`s:${s.id}`) >= 2)
     .map((s) => `t:${s.id}`).filter(fresh);
-  const lists = [conj, gap, translate];
-  const out: string[] = [];
-  const longest = Math.max(...lists.map((l) => l.length));
+  return interleave([conj, gap, translate]);
+}
+
+function interleave<T>(lists: T[][]): T[] {
+  const out: T[] = [];
+  const longest = Math.max(0, ...lists.map((l) => l.length));
   for (let k = 0; k < longest; k++) for (const l of lists) if (k < l.length) out.push(l[k]);
   return out;
 }

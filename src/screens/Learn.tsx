@@ -7,6 +7,7 @@ import { alternates, PROMPT_SLOT, promptsFor } from '../lib/names';
 import { unitVerbs } from '../lib/scheduler';
 import { toHash } from '../lib/route';
 import { startLearning } from '../lib/store';
+import { loadVoices, pickVoice, speak } from '../lib/speech';
 import type { Prompt, Store, Tense, Verb } from '../lib/types';
 import { Icon } from './ui';
 
@@ -36,11 +37,15 @@ export function Learn({ store, verbs, unitId }: Props) {
   const learn = unit && LEARN[unit.id];
   const [tu, setTu] = useState<boolean>();
   const [startFailed, setStartFailed] = useState(false);
+  const [voice, setVoice] = useState<SpeechSynthesisVoice>();
 
   useEffect(() => {
     let live = true;
     void store.settings().then((s) => {
       if (live) setTu(s.tu);
+    });
+    void Promise.all([store.settings(), loadVoices()]).then(([s, voices]) => {
+      if (live) setVoice(pickVoice(voices, s.voice));
     });
     return () => {
       live = false;
@@ -154,7 +159,14 @@ export function Learn({ store, verbs, unitId }: Props) {
         <div className="card examples">
           {learn.examples.map((ex) => (
             <div key={ex.pt} className="example">
-              <span className="pt example__pt" lang="pt-BR">{ex.pt}</span>
+              <div className="example__row">
+                <span className="pt example__pt" lang="pt-BR">{ex.pt}</span>
+                {voice && (
+                  <button type="button" className="listen-btn listen-btn--icon" aria-label="Listen to this example" onClick={() => speak(ex.pt, voice)}>
+                    <Icon name="listen" size={18} />
+                  </button>
+                )}
+              </div>
               <span className="muted small">{ex.en}</span>
             </div>
           ))}

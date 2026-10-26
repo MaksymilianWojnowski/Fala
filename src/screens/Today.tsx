@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
+import { loadSentences, type VerbData } from '../lib/data';
 import { buildSession } from '../lib/scheduler';
+import { loadVoices, pickVoice } from '../lib/speech';
 import { UNITS, STAGE_NAMES } from '../content/units';
 import { currentUnit, endOfTomorrow, reviewsDueBy, streak, unitProgress } from '../lib/stats';
 import { toHash } from '../lib/route';
 import { plural } from '../lib/text';
-import type { VerbData } from '../lib/data';
 import type { CardState, Item, ReviewLog, Settings, Store, Unit, UnitState } from '../lib/types';
 import { Bar, Icon } from './ui';
 
@@ -32,9 +33,13 @@ export function Today({ store, verbs, onStart }: Props) {
   useEffect(() => {
     let live = true;
     void (async () => {
-      const [cards, units, logs, settings] = await Promise.all([store.cards(), store.units(), store.logs(), store.settings()]);
+      const [cards, units, logs, settings, sentences, voices] = await Promise.all([
+        store.cards(), store.units(), store.logs(), store.settings(), loadSentences(), loadVoices(),
+      ]);
       const now = Date.now();
-      const items = buildSession({ cards, units, settings, now, verbs: verbs.list, sentences: [], rng: Math.random, hasVoice: false });
+      const items = buildSession({
+        cards, units, settings, now, verbs: verbs.list, sentences, rng: Math.random, hasVoice: !!pickVoice(voices, settings.voice),
+      });
       const tomorrow = reviewsDueBy(cards.values(), endOfTomorrow(now));
       const cur = currentUnit(units);
       const unit = UNITS.find((u) => u.id === cur?.id);

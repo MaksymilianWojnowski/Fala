@@ -1,4 +1,4 @@
-import type { Unit } from '../lib/types';
+import type { Tense, Unit } from '../lib/types';
 
 export const STAGE_NAMES = ['Core', 'Past', 'Moods', 'Advanced'];
 
@@ -20,3 +20,8 @@ export const UNITS: Unit[] = [
   { id: 'fut', stage: 4, name: 'Futuro simples', example: 'eu falarei', tags: ['written'], tenses: ['fut'] },
   { id: 'inf_pess', stage: 4, name: 'Infinitivo pessoal', example: 'para nós falarmos', tags: [], tenses: ['inf_pess'] },
 ];
+
+// The first unit that teaches the tense, so the why line comes from the earliest lesson.
+export function unitForTense(t: Tense): Unit {
+  return UNITS.find((u) => u.tenses.includes(t))!;
+}
