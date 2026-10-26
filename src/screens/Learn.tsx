@@ -55,7 +55,6 @@ export function Learn({ store, verbs, unitId }: Props) {
   if (!unit || !learn) {
     return (
       <div className="screen">
-        <a className="back" href={toHash({ name: 'path' })}><Icon name="chevron" size={18} />Path</a>
         <p className="muted">That unit doesn't exist.</p>
       </div>
     );
@@ -80,8 +79,6 @@ export function Learn({ store, verbs, unitId }: Props) {
 
   return (
     <div className="screen">
-      <a className="back" href={toHash({ name: 'path' })}><Icon name="chevron" size={18} />Path</a>
-
       <section className="stack">
         <h1 className="display" lang="pt-BR">{unit.name}</h1>
         <p className="learn__example pt" lang="pt-BR">{unit.example}</p>

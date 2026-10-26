@@ -25,6 +25,24 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   );
 }
 
+// Sticky top bar on every screen except a session: brand (or a back link) and Settings.
+export function AppBar({ back, onSettings }: { back?: { href: string; label: string }; onSettings?: boolean }) {
+  return (
+    <header className="appbar">
+      <div className="appbar__inner">
+        {back ? (
+          <a className="back" href={back.href}><Icon name="chevron" size={18} />{back.label}</a>
+        ) : (
+          <a className="brand" href="#/today" aria-label="Fala, go to Today">fala</a>
+        )}
+        <a className="icon-btn" href="#/settings" aria-label="Settings" aria-current={onSettings ? 'page' : undefined}>
+          <Icon name="settings" />
+        </a>
+      </div>
+    </header>
+  );
+}
+
 // Chips only carry Portuguese (tense names, pronouns), so they always get pt-BR and .pt.
 export function Chip({ children, accent }: { children: string; accent?: boolean }) {
   return <span className={`pt chip${accent ? ' chip--accent' : ''}`} lang="pt-BR">{children}</span>;

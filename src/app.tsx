@@ -12,6 +12,7 @@ import { Settings } from './screens/Settings';
 import { Today } from './screens/Today';
 import { Verbs } from './screens/Verbs';
 import { applyTheme } from './lib/theme';
+import { AppBar } from './screens/ui';
 
 type TabName = 'today' | 'path' | 'progress' | 'verbs';
 
@@ -128,6 +129,12 @@ export function App() {
 
   return (
     <>
+      {route.name !== 'session' && (
+        <AppBar
+          back={route.name === 'learn' ? { href: '#/path', label: 'Path' } : route.name === 'settings' ? { href: '#/today', label: 'Today' } : undefined}
+          onSettings={route.name === 'settings'}
+        />
+      )}
       <main className={route.name === 'session' ? 'main--bare' : undefined}>{screen}</main>
       {route.name !== 'session' && (
         <nav className="tabbar" aria-label="Main">

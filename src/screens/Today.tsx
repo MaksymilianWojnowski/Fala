@@ -81,11 +81,6 @@ export function Today({ store, verbs, onStart }: Props) {
 
   return (
     <div className="screen">
-      <header className="top">
-        <span className="brand">fala</span>
-        <a className="icon-btn" href="#/settings" aria-label="Settings"><Icon name="settings" /></a>
-      </header>
-
       {!active ? (
         <section className="stack">
           <p className="lede">Start with the present tense. You can pick any tense later in Path.</p>

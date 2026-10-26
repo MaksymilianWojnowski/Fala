@@ -71,7 +71,6 @@ export function Settings({ store, incoming }: Props) {
 
   return (
     <div className="screen settings">
-      <a className="back" href={toHash({ name: 'today' })}><Icon name="chevron" size={18} />Today</a>
       <h1 className="display">Settings</h1>
       {failed && (
         <p role="alert" className="notice"><Icon name="alert" /> Couldn't save. Try again.</p>
