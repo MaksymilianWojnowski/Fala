@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { loadSentences, type VerbData } from '../lib/data';
 import { buildSession } from '../lib/scheduler';
 import { loadVoices, pickVoice } from '../lib/speech';
-import { UNITS, STAGE_NAMES } from '../content/units';
-import { currentUnit, endOfTomorrow, reviewsDueBy, streak, unitProgress } from '../lib/stats';
+import { STAGE_NAMES, UNITS, unitForTense } from '../content/units';
+import { TENSE_NAMES } from '../lib/names';
+import { currentUnit, endOfTomorrow, promptAccuracy, reviewsDueBy, streak, unitProgress, weakSpots } from '../lib/stats';
 import { toHash } from '../lib/route';
 import { plural } from '../lib/text';
-import type { CardState, Item, ReviewLog, Settings, Store, Unit, UnitState } from '../lib/types';
+import { exampleForms } from '../lib/verbs';
+import type { CardState, Item, Prompt, ReviewLog, Settings, Store, Tense, Unit, UnitState } from '../lib/types';
 import { Bar, Icon } from './ui';
 
 interface TodayData {
@@ -18,6 +20,7 @@ interface TodayData {
   tomorrow: number;
   now: number;
   current?: { unit: Unit; learned: number; total: number };
+  weak: { tense: Tense; prompt: Prompt; pct: number; forms: string[] }[];
 }
 
 interface Props {
@@ -44,7 +47,8 @@ export function Today({ store, verbs, onStart }: Props) {
       const cur = currentUnit(units);
       const unit = UNITS.find((u) => u.id === cur?.id);
       const current = unit && { unit, ...unitProgress(unit, cards, verbs.list) };
-      if (live) setD({ settings, cards, units, logs, items, tomorrow, now, current });
+      const weak = weakSpots(promptAccuracy(cards.values())).map((w) => ({ ...w, forms: exampleForms(verbs.list, w.tense, w.prompt) }));
+      if (live) setD({ settings, cards, units, logs, items, tomorrow, now, current, weak });
     })();
     return () => {
       live = false;
@@ -106,6 +110,23 @@ export function Today({ store, verbs, onStart }: Props) {
             Start session <Icon name="arrow" />
           </a>
           <p className="muted center">{days > 0 && `${plural(days, 'day in a row', 'days in a row')} · `}{tomorrowText}</p>
+        </section>
+      )}
+
+      {d.weak.length > 0 && (
+        <section className="stack">
+          <h2 className="eyebrow">Weak spots</h2>
+          <div className="path-list">
+            {d.weak.map((w) => (
+              <a key={`${w.tense}.${w.prompt}`} className="weak-row" href={toHash({ name: 'learn', unit: unitForTense(w.tense).id })}>
+                <span className="weak-row__main">
+                  <span className="weak-row__name pt" lang="pt-BR">{`${TENSE_NAMES[w.tense]} · ${w.prompt}`}</span>
+                  <span className="weak-row__forms pt" lang="pt-BR">{w.forms.join(' · ')}</span>
+                </span>
+                <span className={`weak-row__pct${w.pct < 60 ? ' weak-row__pct--bad' : w.pct < 75 ? ' weak-row__pct--warn' : ''}`}>{`${w.pct}%`}</span>
+              </a>
+            ))}
+          </div>
         </section>
       )}
 

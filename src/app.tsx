@@ -5,8 +5,12 @@ import { idbStore } from './lib/store';
 import type { Item } from './lib/types';
 import { Learn } from './screens/Learn';
 import { Path } from './screens/Path';
+import { Progress } from './screens/Progress';
 import { Session } from './screens/Session';
+import { Settings } from './screens/Settings';
 import { Today } from './screens/Today';
+import { Verbs } from './screens/Verbs';
+import { applyTheme } from './lib/theme';
 
 type TabName = 'today' | 'path' | 'progress' | 'verbs';
 
@@ -90,10 +94,19 @@ export function App() {
     void loadVerbs().then(setVerbs);
   }, []);
 
+  // Theme applies app-wide at startup, not only once the Settings screen is open.
+  useEffect(() => {
+    void store.settings().then((s) => applyTheme(s.theme));
+  }, [store]);
+
   let screen: ReactNode = <h1>{route.name}</h1>;
   if (verbs && route.name === 'today') screen = <Today store={store} verbs={verbs} onStart={() => restart()} />;
   if (verbs && route.name === 'path') screen = <Path store={store} verbs={verbs} />;
   if (verbs && route.name === 'learn') screen = <Learn key={route.unit} store={store} verbs={verbs} unitId={route.unit} />;
+  if (route.name === 'progress') screen = <Progress store={store} />;
+  // Keyed by lemma so a new #/verbs/:lemma pre-fills the search again.
+  if (verbs && route.name === 'verbs') screen = <Verbs key={route.lemma ?? ''} store={store} verbs={verbs} lemma={route.lemma} />;
+  if (route.name === 'settings') screen = <Settings store={store} />;
   if (verbs && route.name === 'session') {
     screen = (
       <Session

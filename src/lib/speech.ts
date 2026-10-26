@@ -1,6 +1,6 @@
 type VoiceLike = Pick<SpeechSynthesisVoice, 'lang' | 'name' | 'localService'>;
 
-const isBr = (v: VoiceLike) => /^pt[-_]br$/i.test(v.lang);
+export const isBr = (v: VoiceLike) => /^pt[-_]br$/i.test(v.lang);
 
 // Never pt-PT: a European voice reads Brazilian text wrongly.
 export function pickVoice<V extends VoiceLike>(voices: V[], preferred?: string): V | undefined {
