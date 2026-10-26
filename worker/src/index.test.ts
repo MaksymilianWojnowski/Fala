@@ -50,6 +50,13 @@ test('body over 5 MB → 413', async () => {
   expect(map.size).toBe(0);
 });
 
+test('declared content-length over 5 MB → 413 before reading', async () => {
+  const { env, map } = fakeEnv();
+  const res = await call(env, new Request(url(CODE), { method: 'PUT', body: '{}', headers: { 'content-length': '5000001' } }));
+  expect(res.status).toBe(413);
+  expect(map.size).toBe(0);
+});
+
 test('invalid JSON → 400', async () => {
   const { env, map } = fakeEnv();
   const res = await call(env, new Request(url(CODE), { method: 'PUT', body: '{nope' }));

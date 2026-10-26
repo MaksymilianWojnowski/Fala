@@ -37,7 +37,7 @@ export function reviveSnapshot(raw: unknown): Snapshot {
   return s;
 }
 
-// GET remote → merge with local → save locally → PUT merged back.
+// GET remote → upsert-if-newer into local (no deletes) → PUT the local state back.
 export async function syncNow(
   store: Store,
   code: string,
@@ -48,14 +48,12 @@ export async function syncNow(
   try {
     const res = await fetchFn(url);
     if (!res.ok && res.status !== 404) return 'error';
-    const remote = res.status === 404 ? undefined : reviveSnapshot(await res.json());
-    const local = await store.snapshot();
-    const merged = remote ? merge(local, remote) : local;
-    await store.replace(merged);
+    if (res.status !== 404) await store.applyRemote(reviveSnapshot(await res.json()));
+    // Read after applying so the PUT carries the merged state and any writes made meanwhile.
     const put = await fetchFn(url, {
       method: 'PUT',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(merged),
+      body: JSON.stringify(await store.snapshot()),
     });
     return put.ok ? 'ok' : 'error';
   } catch (e) {

@@ -27,6 +27,7 @@ export default {
       return body === null ? reply(404) : reply(200, body, { 'content-type': 'application/json' });
     }
     if (req.method === 'PUT') {
+      if (Number(req.headers.get('content-length') ?? 0) > MAX_BYTES) return reply(413);
       const text = await req.text();
       if (new TextEncoder().encode(text).byteLength > MAX_BYTES) return reply(413);
       try {

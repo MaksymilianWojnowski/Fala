@@ -1,4 +1,4 @@
-import { createStore, delMany, entries, get, keys, set, setMany, values, type UseStore } from 'idb-keyval';
+import { createStore, entries, get, set, update, values, type UseStore } from 'idb-keyval';
 import type { CardState, ReviewLog, Settings, Snapshot, Store, UnitState } from './types';
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -11,8 +11,6 @@ export const DEFAULT_SETTINGS: Settings = {
   streak: true,
   updatedAt: 0,
 };
-
-const pairs = (xs: { id: string }[]) => xs.map((x) => [x.id, x] as [string, unknown]);
 
 // Stores are created on first use so importing this module in node (tests) never touches IndexedDB.
 let cached: Store | undefined;
@@ -54,19 +52,15 @@ export function idbStore(): Store {
       const [c, l, u, settings] = await Promise.all([store.cards(), store.logs(), store.units(), store.settings()]);
       return { cards: [...c.values()], logs: l, units: [...u.values()], settings };
     },
-    // Writes first, then drops stale keys, so a crash mid-way never leaves the store empty.
-    async replace(s) {
+    // Upsert-if-newer, never deletes. Each record is read and written in one transaction,
+    // so a local write that lands during a sync is never overwritten by an older copy.
+    async applyRemote(s) {
       await Promise.all([
-        setMany(pairs(s.cards), cards),
-        setMany(pairs(s.logs), logs),
-        setMany(pairs(s.units), units),
+        ...s.cards.map((c) => update<CardState | undefined>(c.id, (old) => (!old || c.updatedAt > old.updatedAt ? c : old), cards)),
+        ...s.logs.map((l) => update<ReviewLog | undefined>(l.id, (old) => old ?? l, logs)),
+        ...s.units.map((u) => update<UnitState | undefined>(u.id, (old) => (!old || u.updatedAt > old.updatedAt ? u : old), units)),
+        update<Settings | undefined>('settings', (old) => (!old || s.settings.updatedAt > old.updatedAt ? s.settings : old), meta),
       ]);
-      await store.putSettings(s.settings);
-      const prune = async (db: UseStore, keep: { id: string }[]) => {
-        const live = new Set(keep.map((x) => x.id));
-        await delMany((await keys<string>(db)).filter((k) => !live.has(k)), db);
-      };
-      await Promise.all([prune(cards, s.cards), prune(logs, s.logs), prune(units, s.units)]);
     },
   };
   cached = store;
@@ -117,18 +111,17 @@ export function memoryStore(init: Partial<Snapshot> = {}): Store {
     async snapshot() {
       return { cards: [...cards.values()], logs: [...logs.values()], units: [...units.values()], settings: { ...settings } };
     },
-    async replace(s) {
-      const prune = <T>(m: Map<string, T>, keep: { id: string }[]) => {
-        const live = new Set(keep.map((x) => x.id));
-        for (const k of m.keys()) if (!live.has(k)) m.delete(k);
-      };
-      s.cards.forEach((c) => cards.set(c.id, c));
-      s.logs.forEach((l) => logs.set(l.id, l));
-      s.units.forEach((u) => units.set(u.id, u));
-      prune(cards, s.cards);
-      prune(logs, s.logs);
-      prune(units, s.units);
-      settings = { ...s.settings };
+    async applyRemote(s) {
+      for (const c of s.cards) {
+        const old = cards.get(c.id);
+        if (!old || c.updatedAt > old.updatedAt) cards.set(c.id, c);
+      }
+      for (const l of s.logs) if (!logs.has(l.id)) logs.set(l.id, l);
+      for (const u of s.units) {
+        const old = units.get(u.id);
+        if (!old || u.updatedAt > old.updatedAt) units.set(u.id, u);
+      }
+      if (s.settings.updatedAt > settings.updatedAt) settings = { ...s.settings };
     },
   };
 }

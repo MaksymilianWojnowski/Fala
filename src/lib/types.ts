@@ -91,7 +91,7 @@ export interface Store {
   putSettings(s: Settings): Promise<void>;
   device(): Promise<string>;
   snapshot(): Promise<Snapshot>;
-  replace(s: Snapshot): Promise<void>;
+  applyRemote(s: Snapshot): Promise<void>;
 }
 
 export type Item =
